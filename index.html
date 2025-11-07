@@ -1,590 +1,199 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>NextSkill — FinanCity Tycoon Edition</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NextSkill — Aprende jugando con simuladores EBC</title>
 <style>
 :root{
-  /* AZUL ORIGINAL (respeta tu juego) */
-  --bg:#0b1330; --panel:#0f1e46; --ink:#eaf0ff; --muted:#b9c5ee;
-  --accent:#4aa3ff; --accent2:#2a4dfb; --accent3:#00bfff;
-  --good:#34D399; --warn:#FCD34D; --bad:#F87171;
-  --card:rgba(255,255,255,.06); --bd:rgba(255,255,255,.16);
-  --chip:#213a8f; --chip-ink:#d9e2ff;
-  --p-efec:#60a5fa; --p-acc:#A78BFA; --p-bono:#34D399; --p-etf:#F59E0B; --p-inm:#F87171; --p-start:#22D3EE; --p-com:#E879F9;
+  --ink:#0e1730; --muted:#5a6b85; --brand:#0d6efd; --brand2:#2563eb;
+  --bg:#ffffff; --card:#f8faff; --bd:#e5e9f2; --shadow:0 8px 24px rgba(13,110,253,.1);
+  --gold:#b89026;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;font-family:'Inter',system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  color:var(--ink);background:var(--bg);scroll-behavior:smooth;
 }
 
-/* ====== Reset básico ====== */
-*{box-sizing:border-box} html,body{height:100%} body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:
-  radial-gradient(1200px 900px at 10% -10%, #1a2a6c 0%, #0b1330 60%),
-  linear-gradient(135deg, rgba(42,77,251,.12), rgba(0,191,255,.10));
-  scroll-behavior:smooth;
+/* Navbar */
+.nav{display:flex;align-items:center;justify-content:space-between;
+  padding:18px 28px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:#fff;z-index:10;box-shadow:var(--shadow)}
+.logo{font-weight:900;font-size:22px;color:var(--brand2);letter-spacing:.3px}
+.nav a{margin-left:14px;font-weight:600;text-decoration:none;color:var(--brand2)}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer;border:none}
+.btn.main{background:var(--brand2);color:#fff;box-shadow:var(--shadow)}
+.btn.ghost{background:transparent;border:1px solid var(--brand2);color:var(--brand2)}
+.btn.main:hover{opacity:.9} .btn.ghost:hover{background:#eff5ff}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:1.1fr 1fr;align-items:center;gap:40px;padding:60px 10vw 40px 10vw;}
+.hero h1{font-size:42px;line-height:1.1;margin:0 0 12px;color:var(--ink)}
+.hero p{color:var(--muted);font-size:17px;line-height:1.6;margin-bottom:22px}
+.hero-img{width:100%;height:300px;background:linear-gradient(135deg,#0d6efd20,#2563eb15),
+  url('https://cdn.pixabay.com/photo/2016/11/29/04/08/business-1868652_1280.jpg') center/cover;
+  border-radius:20px;box-shadow:var(--shadow);}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+
+/* Sección genérica */
+.section{padding:60px 10vw;text-align:center}
+.section h2{font-size:30px;margin-bottom:16px;color:var(--ink)}
+.section p{color:var(--muted);font-size:16px;margin-bottom:32px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:22px;
+  box-shadow:var(--shadow);transition:all .25s ease}
+.card:hover{transform:translateY(-4px);box-shadow:0 10px 26px rgba(13,110,253,.18)}
+.icon{font-size:38px;margin-bottom:12px;color:var(--brand2)}
+.card h3{margin:0 0 8px;font-size:18px}
+.card p{margin:0;font-size:14px;color:var(--muted)}
+
+/* Cómo funciona */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;text-align:left}
+.step{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+.step h4{margin:6px 0;font-size:17px;color:var(--brand2)}
+.step p{font-size:14px;color:var(--muted)}
+
+/* NUEVAS SECCIONES */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;text-align:center;margin-top:30px}
+.stat-card{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+.stat-card h3{color:var(--brand2);margin:8px 0}
+.stat-circle{
+  width:100px;height:100px;margin:0 auto 10px;border-radius:50%;
+  background:conic-gradient(var(--gold) 25%, #f0f0f0 25%);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;color:var(--ink)
 }
-
-/* ====== NAV / BRAND ====== */
-.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(8px);background:rgba(11,19,48,.65);border-bottom:1px solid var(--bd)}
-.nav .inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:12px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.2px}
-.logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:grid;place-items:center;color:#06102b;font-weight:900}
-.nav a{color:var(--ink);text-decoration:none;font-weight:700;opacity:.9;margin-left:16px}
-.nav a:hover{opacity:1;text-decoration:underline}
-
-/* ====== HERO (Landing) ====== */
-.hero{max-width:1200px;margin:0 auto;padding:48px 16px;display:grid;grid-template-columns:1.2fr .8fr;gap:24px}
-.hero .title{font-size:36px;line-height:1.15;margin:0 0 8px;color:var(--accent)}
-.hero p{color:var(--muted);margin:0 0 14px}
-.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#17347a;color:#cbd6ff;font-weight:800;border:1px solid rgba(255,255,255,.18)}
-.cta{display:flex;gap:10px;margin-top:12px}
-.btn{background:var(--accent);color:#071032;border:none;border-radius:10px;padding:10px 14px;font-weight:900;cursor:pointer}
-.btn.ghost{background:transparent;border:1px dashed rgba(255,255,255,.35);color:var(--ink)}
-.mock{border:1px solid var(--bd);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border-radius:14px;padding:10px}
-
-/* ====== SECCIONES ====== */
-.section{max-width:1200px;margin:0 auto;padding:28px 16px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.card{background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));border:1px solid var(--bd);border-radius:12px;padding:14px}
-.card h3{margin:0 0 6px}
-.small{font-size:13px;color:var(--muted)}
-
-/* ====== CONTENEDOR DEL JUEGO ====== */
-#gameWrap{max-width:1280px;margin:8px auto 40px;padding:0 12px 16px}
-#wrap{display:grid;grid-template-columns:820px 1fr;gap:12px}
-#left{display:grid;grid-template-rows:340px 1fr;gap:12px}
-#right{display:grid;grid-template-rows:auto auto auto 1fr;gap:12px}
-.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.badge2{display:inline-block;padding:2px 8px;border-radius:6px;background:#17347a;font-size:11px;color:#cbd1ff}
-.hr{height:1px;background:rgba(255,255,255,.08);margin:8px 0}
-.sep{height:1px;background:rgba(255,255,255,.08);margin:6px 0}
-#chartCard{position:relative}
-#chart{width:100%;height:300px;border-radius:10px;background:#0c1133;border:1px solid var(--bd)}
-#heat{position:absolute;right:10px;top:10px;font-size:12px;color:var(--muted)}
-#kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.kpi{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 10px}
-.kpi h4{margin:0 0 3px;font-size:12px;color:var(--muted)}
-.kpi .v{font-weight:800}
-.progress{height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:6px}
-.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--bad),var(--warn),var(--good));width:0%}
-#market{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-.asset{background:var(--panel);border:1px solid var(--bd);border-radius:10px;padding:8px}
-.asset h4{margin:0 0 2px;font-size:13px}
-.pill{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--chip);color:var(--chip-ink);font-size:11px;font-weight:800}
-.btn.small{padding:6px 9px} .btn.warn{background:var(--warn);color:#191300} .btn.bad{background:var(--bad);color:#2b0d0d} .btn.good{background:var(--good);color:#05140f}
-.toast{position:fixed;left:50%;top:10px;transform:translateX(-50%);background:#0f1333;color:#cbd1ff;border:1px solid var(--bd);padding:6px 10px;border-radius:10px;opacity:0;transition:opacity .2s, transform .2s;z-index:20}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-#overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,8,20,.76);z-index:30}
-.modal{width:min(760px,92vw);background:#0f1330;border:1px solid var(--bd);border-radius:14px;padding:14px}
-.opts{display:grid;gap:8px;margin-top:8px}
-.opt{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:8px;cursor:pointer}
-.opt:hover{border-color:var(--accent)}
-.correct{border-color:var(--good);background:rgba(52,211,153,.12)}
-.wrong{border-color:var(--bad);background:rgba(248,113,113,.12)}
-#gamifyCard{position:relative;overflow:hidden}
-#gamifyCard::before{content:"";position:absolute;inset:-1px;border-radius:12px;background:linear-gradient(135deg, rgba(42,77,251,.35), rgba(0,191,255,.25));filter:blur(14px);opacity:.6;z-index:0}
-#gamifyInner{position:relative;z-index:1}
-.gxp{font-weight:800;font-size:20px}
-.glevel{font-weight:800}
-.gbadges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-.gbadge{background:linear-gradient(135deg,#2a4dfb,#00bfff);color:#051033;padding:4px 8px;border-radius:999px;font-weight:800;border:1px solid rgba(255,255,255,.4)}
-#statusRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-#statusRow .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#213a8f;color:#dfe6ff;font-size:11px;font-weight:800}
-
-/* Instrucciones botón */
-#infoBtn{position:sticky;top:68px;float:right;background:#213a8f;border:none;color:#dbe1ff;font-weight:800;border-radius:8px;padding:6px 10px;cursor:pointer;z-index:35}
-#infoBtn:hover{background:#2a4dfb}
-#infoModal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:40}
-#infoWrap{background:#0f1330;border:1px solid var(--bd);border-radius:14px;padding:16px;width:min(760px,90vw);max-height:90vh;overflow:auto}
-#infoWrap h2{margin:0 0 8px}
 
 /* Footer */
-.footer{max-width:1200px;margin:0 auto;padding:24px 16px;color:var(--muted);display:flex;justify-content:space-between;border-top:1px solid var(--bd)}
-@media (max-width:1100px){ .hero{grid-template-columns:1fr} #wrap{grid-template-columns:1fr} #market{grid-template-columns:repeat(3,1fr)} }
+footer{background:var(--brand2);color:#fff;text-align:center;padding:22px;font-size:14px;margin-top:40px}
+footer a{color:#fff;text-decoration:underline}
 </style>
 </head>
 <body>
 
-<!-- ===== NAV ===== -->
-<nav class="nav">
-  <div class="inner">
-    <div class="brand">
-      <div class="logo">N</div>
-      <div>NextSkill</div>
-    </div>
-    <div>
-      <a href="#inicio">Inicio</a>
-      <a href="#como">Cómo funciona</a>
-      <a href="#jugar">Jugar ahora</a>
-    </div>
-  </div>
-</nav>
-
-<!-- ===== HERO / LANDING ===== -->
-<section class="hero" id="inicio">
+<!-- Navbar -->
+<div class="nav">
+  <div class="logo">NextSkill</div>
   <div>
-    <span class="badge">📘 Programa universitario · Finanzas interactivas</span>
-    <h1 class="title">NextSkill — FinanCity Tycoon Edition</h1>
-    <p>Aprende decisiones financieras <b>jugando</b>: liquidez, deuda, diversificación y eventos macro, todo con el <b>tema azul original</b> que te gusta.</p>
-    <div class="cta">
-      <a class="btn" href="#jugar">▶️ Jugar ahora</a>
-      <a class="btn ghost" href="#como">Guía rápida</a>
-    </div>
-    <p class="small" style="margin-top:10px">Tip: gana superando la meta con ratios sanos. Responde preguntas para obtener <i>boosts</i> temporales.</p>
+    <a href="#beneficios">Beneficios</a>
+    <a href="#juegos">Juegos</a>
+    <a href="#como">Cómo funciona</a>
+    <a class="btn main" href="game.html" target="_blank">Jugar ahora</a>
   </div>
-  <div class="mock">
-    <!-- Previsualización simple -->
-    <div style="height:220px;background:#0c1133;border:1px solid var(--bd);border-radius:8px;display:grid;place-items:center;color:var(--muted);">
-      Vista previa del tablero (tema azul)
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div>
+    <h1>Aprende finanzas, contabilidad y negocios jugando</h1>
+    <p>NextSkill transforma las materias de la <b>EBC</b> en experiencias interactivas.  
+       Aprende haciendo, responde desafíos y mejora tus habilidades con simuladores que premian tu progreso.</p>
+    <div class="hero-btns">
+      <a class="btn main" href="game.html" target="_blank">▶️ Iniciar simulador</a>
+      <a class="btn ghost" href="#beneficios">Explorar más</a>
     </div>
   </div>
+  <div class="hero-img"></div>
 </section>
 
-<!-- ===== CÓMO FUNCIONA ===== -->
-<section class="section" id="como">
-  <h2 style="margin:0 0 10px">Cómo funciona</h2>
+<!-- Beneficios -->
+<section id="beneficios" class="section">
+  <h2>Beneficios de NextSkill</h2>
+  <p>Desarrolla competencias clave de forma práctica y divertida.</p>
   <div class="grid3">
-    <div class="card">
-      <h3>1) Avanza rondas</h3>
-      <p class="small">Cada ronda simula un mes: rendimientos, intereses y gastos operativos. Observa el patrimonio y los KPIs.</p>
+    <div class="card"><div class="icon">🎓</div><h3>Aprendizaje Activo</h3><p>Aprende tomando decisiones reales, no memorizando teorías.</p></div>
+    <div class="card"><div class="icon">💡</div><h3>Refuerzo Práctico</h3><p>Aplica fórmulas, conceptos contables y financieros en escenarios simulados.</p></div>
+    <div class="card"><div class="icon">🏆</div><h3>Progreso Gamificado</h3><p>Gana XP, desbloquea logros y compite sanamente entre compañeros.</p></div>
+  </div>
+</section>
+
+<!-- Juegos -->
+<section id="juegos" class="section">
+  <h2>Catálogo de Juegos</h2>
+  <p>Explora experiencias diseñadas para cada licenciatura EBC.</p>
+  <div class="grid3">
+    <div class="card"><h3>Simulador de Inversiones</h3><p>Gestiona portafolios, responde preguntas y equilibra liquidez y apalancamiento.</p></div>
+    <div class="card"><h3>Balance y Flujo</h3><p>Registra operaciones y analiza estados financieros en tiempo real.</p></div>
+    <div class="card"><h3>Casos Express</h3><p>Decide rápido: aplica análisis micro, meso y macro en expansión empresarial.</p></div>
+  </div>
+</section>
+
+<!-- Cómo funciona -->
+<section id="como" class="section">
+  <h2>Cómo funciona</h2>
+  <div class="steps">
+    <div class="step"><h4>1️⃣ Inicia el juego</h4><p>Abre el simulador desde el botón “Jugar ahora” y personaliza tus decisiones.</p></div>
+    <div class="step"><h4>2️⃣ Aprende jugando</h4><p>Gestiona tu portafolio, toma préstamos, aplica estrategias y contesta quizzes.</p></div>
+    <div class="step"><h4>3️⃣ Gana experiencia</h4><p>Obtén XP y logros por cada decisión correcta, midiendo tu progreso financiero.</p></div>
+  </div>
+</section>
+
+<!-- 🔹 NUEVA SECCIÓN 1: Resultados Comprobados -->
+<section class="section" id="resultados">
+  <h2>Resultados Comprobados</h2>
+  <p><b>Estudio + Diversión + Bienestar = Aprendizaje Sostenible</b></p>
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-circle">25%</div>
+      <h3>Mejor Concentración</h3>
+      <p>Con pausas activas estratégicas.<br><i>Fuente: PubMed (2024)</i></p>
     </div>
-    <div class="card">
-      <h3>2) Decide</h3>
-      <p class="small">Compra/Vende por monto, ajusta reservas de caja, toma o paga deuda y usa power-ups en el momento correcto.</p>
+    <div class="stat-card">
+      <h3>Motivación Elevada</h3>
+      <p>Equilibrio emocional y resultados medibles en tiempo real.</p>
     </div>
-    <div class="card">
-      <h3>3) Aprende</h3>
-      <p class="small">Responde preguntas rápidas. Si aciertas, obtienes bonos; si fallas, hay penalización. ¡Sube de nivel y gana logros!</p>
+    <div class="stat-card">
+      <h3>Aprendizaje Sostenible</h3>
+      <p>Basado en evidencia: pausas activas mejoran 25 % la concentración.</p>
     </div>
   </div>
 </section>
 
-<!-- ===== JUEGO ===== -->
-<section class="section" id="jugar">
-  <div class="row" style="justify-content:space-between;margin-bottom:8px">
-    <h2 style="margin:0">Tablero de juego</h2>
-    <button id="infoBtn">🧭 Instrucciones</button>
-  </div>
-
-  <div id="gameWrap">
-    <div id="wrap">
-      <!-- LEFT -->
-      <div id="left">
-        <div id="topPanel">
-          <div class="card" id="chartCard">
-            <div class="row" style="justify-content:space-between;margin-bottom:6px">
-              <div>
-                <span class="badge2">Patrimonio</span>
-                <span id="networthLbl" class="badge2">—</span>
-              </div>
-              <div id="heat">—</div>
-            </div>
-            <canvas id="chart"></canvas>
-          </div>
-          <div class="card" id="kpisCard">
-            <div id="statusRow">
-              <span class="badge" id="modeLbl">Ronda 1</span>
-              <span class="badge" id="goalLbl">Meta: $250,000</span>
-              <span class="badge" id="cashLbl">Efectivo: —</span>
-              <span class="badge" id="debtLbl">Deuda: —</span>
-            </div>
-            <div id="kpis" style="margin-top:8px">
-              <div class="kpi"><h4>Liquidez</h4><div class="v" id="liqV">—</div><div class="progress"><span id="liqBar"></span></div></div>
-              <div class="kpi"><h4>Apalancamiento</h4><div class="v" id="levV">—</div><div class="progress"><span id="levBar"></span></div></div>
-              <div class="kpi"><h4>Diversificación</h4><div class="v" id="divV">—</div><div class="progress"><span id="divBar"></span></div></div>
-            </div>
-            <div class="row" style="margin-top:8px">
-              <button class="btn small" id="btnNext">▶️ Siguiente ronda</button>
-              <button class="btn small ghost" id="btnQuiz">🧠 Pregunta</button>
-              <button class="btn small ghost" id="btnEvent">🌀 Evento</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Mercado (activos)</h3>
-          <div id="market"></div>
-        </div>
-      </div>
-
-      <!-- RIGHT -->
-      <div id="right">
-        <div class="card" id="gamifyCard">
-          <div id="gamifyInner">
-            <h3>🏅 Progreso del jugador</h3>
-            <div class="row" style="gap:14px">
-              <div><span class="badge2">XP</span> <span id="xpLbl" class="gxp">0</span></div>
-              <div><span class="badge2">Nivel</span> <span id="lvlLbl" class="glevel">1</span></div>
-            </div>
-            <div class="gbadges" id="badgesWrap" style="margin-top:6px"></div>
-          </div>
-        </div>
-
-        <div class="card" id="controls">
-          <h3>Controles rápidos</h3>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
-            <div class="card" style="padding:10px">
-              <h4 style="margin:0 0 6px">Compra/Venta</h4>
-              <div class="row">
-                <select id="assetSel" style="min-width:140px"></select>
-                <input type="number" id="amount" value="1000" min="100" step="100" style="width:120px"/>
-              </div>
-              <div class="row" style="margin-top:6px">
-                <button class="btn small" id="btnBuy">Comprar</button>
-                <button class="btn small bad" id="btnSell">Vender</button>
-              </div>
-              <p class="small">Compra/Vende por monto (no por unidades). Spread y liquidez aplican.</p>
-            </div>
-            <div class="card" style="padding:10px">
-              <h4 style="margin:0 0 6px">Deuda & Objetivo</h4>
-              <div class="row">
-                <input type="number" id="loanAmt" value="5000" min="1000" step="500" style="width:120px"/>
-                <button class="btn small warn" id="btnLoan">Préstamo</button>
-                <button class="btn small good" id="btnRepay">Pagar</button>
-              </div>
-              <div class="row" style="margin-top:6px">
-                <input type="number" id="goal" value="250000" step="5000" style="width:120px"/>
-                <button class="btn small" id="btnSetGoal">Actualizar meta</button>
-              </div>
-              <div class="row" style="margin-top:6px">
-                <span class="small">Reserva mínima (%):</span>
-                <input type="range" id="resMin" min="0" max="50" value="10"/>
-                <span id="resMinLbl" class="small">10%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" id="powerups">
-          <h3>Power-Ups (finanzas)</h3>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
-            <div class="card"><h4>🛡️ Cobertura</h4><p class="small">-30% volatilidad 3 rondas.</p><button class="btn small" id="puHedge">Activar</button></div>
-            <div class="card"><h4>📊 Reporte</h4><p class="small">+2% retorno 3 rondas.</p><button class="btn small" id="puReport">Activar</button></div>
-            <div class="card"><h4>✂️ Eficiencia</h4><p class="small">-15% gasto fijo esta ronda.</p><button class="btn small" id="puCut">Activar</button></div>
-            <div class="card"><h4>🔁 Rebalanceo</h4><p class="small">Mejora diversificación.</p><button class="btn small" id="puRebal">Activar</button></div>
-          </div>
-          <div class="hr"></div>
-          <div class="row">
-            <button class="btn small ghost" id="btnRandomPU">🎲 Aleatorio</button>
-            <span id="puTimers" class="small">Timers: —</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Registro</h3>
-          <div id="log" style="height:240px;overflow:auto;font-size:12px"></div>
-        </div>
-      </div>
+<!-- 🔹 NUEVA SECCIÓN 2: Oportunidad de Expansión -->
+<section class="section" id="expansion">
+  <h2>Oportunidad de expansión</h2>
+  <div class="grid3">
+    <div class="card" style="border-left:6px solid var(--gold)">
+      <h3>10M+ Estudiantes</h3>
+      <p>Mexicanos de 15–25 años bajo presión académica constante.<br><i>SEP (2024)</i></p>
+    </div>
+    <div class="card" style="border-left:6px solid var(--gold)">
+      <h3>+60 % Crecimiento</h3>
+      <p>EdTech en Latinoamérica expande aceleradamente.<br><i>OECD (2023)</i></p>
+    </div>
+    <div class="card" style="border-left:6px solid var(--gold)">
+      <h3>Tres Tendencias, Una Solución</h3>
+      <p>Educación Digital · IA · Bienestar Mental</p>
     </div>
   </div>
 </section>
 
-<!-- ===== MODALES ===== -->
-<div class="toast" id="toast"></div>
-
-<div id="overlay">
-  <div class="modal">
-    <h2 id="qTitle">Pregunta</h2>
-    <div><span class="badge2" id="qCat">Fundamental</span></div>
-    <p id="qText" class="small"></p>
-    <div id="qOpts" class="opts"></div>
-    <div class="row" style="justify-content:flex-end;margin-top:8px">
-      <button class="btn" id="qClose" style="display:none">Cerrar</button>
+<!-- 🔹 NUEVA SECCIÓN 3: NextSkill Lista para Escalar -->
+<section class="section" id="escalar">
+  <h2>NextSkill — Lista para Escalar</h2>
+  <div class="grid3">
+    <div class="card" style="border-left:6px solid var(--gold)">
+      <h3>Problema Real</h3>
+      <p>70 % de estudiantes con estrés académico.</p>
+    </div>
+    <div class="card" style="border-left:6px solid var(--gold)">
+      <h3>Solución Innovadora</h3>
+      <p>IA + Gamificación + Bienestar mental.</p>
+    </div>
+    <div class="card" style="border-left:6px solid var(--gold)">
+      <h3>Mercado Enorme</h3>
+      <p>10 M+ usuarios potenciales en México.</p>
     </div>
   </div>
-</div>
+  <p style="margin-top:16px;color:var(--muted)">Aprender sin agotarse. El futuro de la educación está aquí.</p>
+</section>
 
-<!-- Modal Instrucciones -->
-<div id="infoModal">
-  <div id="infoWrap">
-    <h2>🧭 Instrucciones</h2>
-    <p><b>Objetivo:</b> alcanza la <b>meta</b> (por defecto $250,000) con ratios sanos:</p>
-    <ul>
-      <li><b>Liquidez</b> (efectivo/patrimonio) ≥ 12%</li>
-      <li><b>Apalancamiento</b> (deuda/patrimonio) ≤ 35%</li>
-      <li><b>Diversificación</b> equilibrada</li>
-    </ul>
-    <h3>🎮 Cómo jugar</h3>
-    <ul>
-      <li><b>▶️ Siguiente ronda</b>: avanza un mes (rendimientos, gastos, intereses).</li>
-      <li><b>Mercado</b>: compra/venta por monto; cada activo tiene μ (esperado), σ (volatilidad) y spread.</li>
-      <li><b>Préstamos</b>: suben liquidez pero también intereses.</li>
-      <li><b>Power-Ups</b>: Cobertura, Reporte, Eficiencia y Rebalanceo.</li>
-      <li><b>Preguntas 🧠</b>: correcto = bono; incorrecto = penalización.</li>
-    </ul>
-    <h3>⌨️ Atajos</h3>
-    <ul>
-      <li><kbd>Espacio</kbd> — siguiente ronda</li>
-      <li><kbd>Q</kbd> — compra rápida +$1,000</li>
-      <li><kbd>W</kbd> — venta rápida $1,000</li>
-      <li><kbd>E</kbd> — power-up aleatorio</li>
-    </ul>
-    <div class="row" style="justify-content:flex-end;margin-top:8px">
-      <button class="btn" id="closeInfo">Cerrar</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== FOOTER ===== -->
-<footer class="footer">
-  <span>© 2025 NextSkill. Hecho para aprendizaje universitario.</span>
-  <span class="small">Tema azul original · Juego integrado</span>
+<!-- Footer -->
+<footer>
+  © 2025 NextSkill — Proyecto académico para estudiantes EBC · 
+  <a href="game.html" target="_blank">Abrir simulador</a>
 </footer>
 
-<script>
-/* =================== UTILIDADES =================== */
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
-const fmt = v => '$'+Math.round(v).toLocaleString('en-US');
-const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
-const pick = arr => arr[Math.floor(Math.random()*arr.length)];
-function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1100) }
-function log(line, cls=''){ const d=document.createElement('div'); d.textContent=line; if(cls) d.className=cls; $("#log").prepend(d) }
-
-/* =================== HERO CTA scroll =================== */
-if(location.hash==="#jugar"){ setTimeout(()=>document.getElementById("jugar").scrollIntoView({behavior:'smooth'}),100) }
-
-/* =================== MODAL INSTRUCCIONES =================== */
-const infoBtn=$("#infoBtn"), infoModal=$("#infoModal"), closeInfo=$("#closeInfo");
-infoBtn.onclick=()=>{ infoModal.style.display='flex' }
-closeInfo.onclick=()=>{ infoModal.style.display='none' }
-window.addEventListener('click',e=>{ if(e.target===infoModal) infoModal.style.display='none' })
-
-/* =================== CHART SIMPLE =================== */
-const canvas = $("#chart"); const ctx = canvas.getContext('2d');
-function resizeCanvas(){ const r = $("#chartCard").getBoundingClientRect(); canvas.width = r.width-4; canvas.height = 260 }
-resizeCanvas(); window.addEventListener('resize', resizeCanvas);
-function drawChart(series){
-  const w=canvas.width,h=canvas.height; ctx.clearRect(0,0,w,h);
-  ctx.fillStyle="#0a0f2a"; ctx.fillRect(0,0,w,h);
-  ctx.strokeStyle="rgba(255,255,255,.08)"; ctx.lineWidth=1;
-  for(let i=0;i<=6;i++){ const y=i*h/6; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke() }
-  const min = Math.min(...series)*0.98, max = Math.max(...series)*1.02;
-  const xstep = w/Math.max(1,(series.length-1));
-  ctx.strokeStyle="#7c9cff"; ctx.lineWidth=2; ctx.beginPath();
-  series.forEach((v,i)=>{ const x=i*xstep, y=h - (v-min)/(max-min)*h; if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); });
-  ctx.stroke();
-}
-
-/* =================== DATOS DEL JUEGO =================== */
-/* Incluyo ASSETS inline (no necesitas market_data.json) */
-let ASSETS = [
-  { id:'efectivo', name:'Efectivo', kind:'cash', mu:0.00, sigma:0.00, spread:0.00 },
-  { id:'acciones', name:'Acciones', kind:'equity', mu:0.10, sigma:0.22, spread:0.01 },
-  { id:'bonos', name:'Bonos', kind:'bond', mu:0.05, sigma:0.06, spread:0.005 },
-  { id:'etf', name:'ETF Global', kind:'etf', mu:0.08, sigma:0.14, spread:0.008 },
-  { id:'inmuebles', name:'Inmuebles', kind:'re', mu:0.07, sigma:0.10, spread:0.015 },
-  { id:'commodities', name:'Commodities', kind:'cmd', mu:0.06, sigma:0.18, spread:0.012 },
-  { id:'startups', name:'Startups', kind:'alt', mu:0.15, sigma:0.35, spread:0.02 }
-];
-
-const BANK_QUEST = [
- {cat:'Estados', q:'¿Qué estado presenta activos, pasivos y capital?', a:['Balance general','Estado de resultados','Flujo de efectivo'], ok:0, expl:'El balance muestra la posición financiera a una fecha.', bonus:{mu:+0.01}},
- {cat:'Resultados', q:'Si el margen bruto sube y gastos se mantienen, la utilidad operativa tiende a…', a:['Aumentar','Disminuir','No cambia'], ok:0, expl:'Más margen → mayor EBIT, ceteris paribus.', bonus:{cash:+1500}},
- {cat:'Liquidez', q:'Un DSO alto suele implicar…', a:['Cobro lento','Mejor rotación','Más liquidez inmediata'], ok:0, expl:'Más días para convertir ventas a efectivo.', bonus:{liq:+8}},
- {cat:'Valuación', q:'Un P/E muy alto sugiere…', a:['Altas expectativas','Problemas de caja','Mayor deuda'], ok:0, expl:'Mercado paga más por utilidades futuras.', bonus:{mu:+0.005}},
- {cat:'Costo de capital', q:'Si baja el WACC, el valor de la empresa tiende a…', a:['Aumentar','Disminuir','No cambia'], ok:0, expl:'Menor tasa de descuento → mayor valor.', bonus:{risk:-0.05}},
- {cat:'Flujos', q:'El flujo clave para sostenibilidad operativa es…', a:['Flujo de operación','Financiamiento','Inversión'], ok:0, expl:'FO mide caja del core del negocio.', bonus:{cash:+1200}},
- {cat:'Apalancamiento', q:'Una razón Deuda/Patrimonio al alza implica…', a:['Mayor riesgo financiero','Menor riesgo','No afecta'], ok:0, expl:'Más deuda eleva riesgo y costo.', bonus:{lev:-0.05}},
-];
-const EVENTS = [
- {name:'📉 Hike de tasas', eff: s=>{ s.shockMu-=0.02; s.shockSigma+=0.02; log('Tasas al alza: baja retorno esperado y sube volatilidad','log-warn') }},
- {name:'🐂 Mini bull run', eff: s=>{ s.shockMu+=0.03; s.shockSigma-=0.01; log('Rally: sube retorno esperado y cae volatilidad','log-ok') }},
- {name:'🛢️ Shock commodities', eff: s=>{ s.assetMu.etf+=0.01; s.assetMu.commodities+=0.03; log('Materias primas al alza','log-warn') }},
- {name:'🏠 Boom inmobiliario', eff: s=>{ s.assetMu.inmuebles+=0.02; log('Suben valorizaciones inmobiliarias','log-ok') }},
- {name:'💸 Apreciación FX', eff: s=>{ s.assetMu.etf-=0.01; s.assetSigma.etf+=0.02; log('FX pega al ETF global','log-warn') }},
- {name:'⚠️ Riesgo geopolítico', eff: s=>{ s.shockSigma+=0.03; log('Aumenta incertidumbre global','log-bad') }},
- {name:'🧾 Recaudación/Multa ESG', eff: s=>{ s.cash-=2000; log('Multa ESG/Legal: -$2,000','log-bad') }},
-];
-
-/* =================== ESTADO =================== */
-const game = {
-  round:1, cash:50000, debt:0, debtRate:0.08,
-  positions:{}, prices:{}, mu:{}, sigma:{}, spread:{},
-  shockMu:0, shockSigma:0,
-  assetMu:{etf:0, commodities:0, inmuebles:0},
-  assetSigma:{etf:0},
-  pu:{hedge:0, report:0, cut:false},
-  reserveMin:0.10, goal:250000,
-  nwSeries:[50000],
-};
-
-/* =================== BUILD UI =================== */
-const marketEl = $("#market"); const assetSel=$("#assetSel");
-function buildFromAssets(){
-  game.positions={}; game.prices={}; game.mu={}; game.sigma={}; game.spread={};
-  ASSETS.forEach(a=>{
-    game.positions[a.id] = (a.id==='efectivo'? 50000 : 0);
-    game.prices[a.id]   = (a.id==='efectivo'? 1 : 100);
-    game.mu[a.id] = a.mu; game.sigma[a.id]=a.sigma; game.spread[a.id]=a.spread;
-  });
-}
-function buildMarket(){
-  marketEl.innerHTML=''; assetSel.innerHTML='';
-  ASSETS.forEach(a=>{
-    if(a.id!=='efectivo') assetSel.innerHTML += `<option value="${a.id}">${a.name}</option>`;
-    const div=document.createElement('div'); div.className='asset'; div.dataset.id=a.id;
-    div.innerHTML=`
-      <h4>${a.name}</h4>
-      <div class="row">
-        <span class="pill">${(a.kind||'—').toString().toUpperCase()}</span>
-        <span class="small">μ ${(a.mu*100).toFixed(1)}% · σ ${(a.sigma*100).toFixed(1)}% · spread ${(a.spread*100).toFixed(1)}%</span>
-      </div>
-      <div class="sep"></div>
-      <div class="row">
-        <span class="small">Precio:</span><b id="p-${a.id}">$${game.prices[a.id].toFixed(2)}</b>
-        <span class="small">Posición:</span><b id="pos-${a.id}">${fmt(game.positions[a.id])}</b>
-      </div>
-      ${a.id!=='efectivo' ? `
-      <div class="row" style="margin-top:6px">
-        <button class="btn small" data-act="buy" data-id="${a.id}">Comprar +$1,000</button>
-        <button class="btn small bad" data-act="sell" data-id="${a.id}">Vender $1,000</button>
-      </div>`:''}
-    `;
-    marketEl.appendChild(div);
-  });
-}
-function herfindahl(weights){ const sum = Object.values(weights).reduce((s,v)=>s+v,0)||1; let h=0; for(const k in weights){ const w=weights[k]/sum; h+=w*w } return 1-h; }
-function netWorth(){ let v=game.cash - game.debt; ASSETS.forEach(a=>{ if(a.id==='efectivo') return; v += game.positions[a.id]*game.prices[a.id] }); return v; }
-function refreshMarket(){ ASSETS.forEach(a=>{ $("#p-"+a.id)?.textContent = "$"+game.prices[a.id].toFixed(2); $("#pos-"+a.id)?.textContent = fmt(game.positions[a.id]); }); }
-function updateKPIs(){
-  const nw=netWorth();
-  $("#networthLbl").textContent = fmt(nw);
-  $("#cashLbl").textContent = "Efectivo: "+fmt(game.cash);
-  $("#debtLbl").textContent = "Deuda: "+fmt(game.debt);
-  const liq = game.cash/Math.max(1,nw), lev = game.debt/Math.max(1,nw);
-  const weights={}; ASSETS.forEach(a=>{ if(a.id==='efectivo') return; weights[a.id]= game.positions[a.id]*game.prices[a.id] });
-  const div = herfindahl(weights);
-  $("#liqV").textContent=(liq*100).toFixed(1)+"%"; $("#levV").textContent=(lev*100).toFixed(1)+"%"; $("#divV").textContent=(div*100).toFixed(1)+"%";
-  $("#liqBar").style.width=clamp(liq*100,0,100)+'%'; $("#levBar").style.width=clamp(lev*100,0,100)+'%'; $("#divBar").style.width=clamp(div*100,0,100)+'%';
-  $("#modeLbl").textContent="Ronda "+game.round;
-  $("#goalLbl").textContent="Meta: "+fmt(game.goal);
-  $("#heat").textContent = `μ mercado ${(game.shockMu*100).toFixed(1)}% · σ mercado ${(game.shockSigma*100).toFixed(1)}%`;
-}
-function pushAndDrawNW(){ const nw2 = netWorth(); game.nwSeries.push(nw2); drawChart(game.nwSeries); }
-
-/* =================== GAMIFICACIÓN LOCAL =================== */
-const GamifyLocal = {
-  ns:'NextSkill_Local',
-  _load(){ return JSON.parse(localStorage.getItem(this.ns)||'{}') },
-  _save(d){ localStorage.setItem(this.ns, JSON.stringify(d)) },
-  getUser(id){ const db=this._load(); if(!db[id]) db[id]={id,points:0,achievements:[]}; this._save(db); return db[id]; },
-  addPoints(id, pts){ const db=this._load(); db[id]=db[id]||{id,points:0,achievements:[]}; db[id].points=Math.max(0,(db[id].points||0)+pts); this._save(db); return db[id]; },
-  unlock(id, badge){ const db=this._load(); db[id]=db[id]||{id,points:0,achievements:[]}; if(!db[id].achievements.includes(badge)) db[id].achievements.push(badge); this._save(db); return db[id]; }
-};
-const playerId='player1';
-const RULES={ BUY:{xp:10,badge:'Inversionista Activo'}, SELL:{xp:5,badge:'Gestor Prudente'}, QUIZ_OK:{xp:25,badge:'Analista Fundamental'}, QUIZ_FAIL:{xp:-5}, GOAL:{xp:100,badge:'Financiero Élite'}, PU:{xp:15,badge:'Estratega Financiero'} };
-function refreshGamifyUI(){
-  const u=GamifyLocal.getUser(playerId);
-  const xpEl=$("#xpLbl"), lvlEl=$("#lvlLbl");
-  const before=+xpEl.textContent||0; xpEl.textContent=u.points; lvlEl.textContent=Math.floor((u.points||0)/100)+1;
-  const wrap=$("#badgesWrap"); wrap.innerHTML=''; (u.achievements||[]).forEach(b=>{ const s=document.createElement('span'); s.className='gbadge'; s.textContent=b; wrap.appendChild(s); });
-  if(u.points!==before){ xpEl.classList.add('bump'); setTimeout(()=>xpEl.classList.remove('bump'),360) }
-}
-
-/* =================== TRADING =================== */
-function trade(assetId, amount){
-  const a = ASSETS.find(x=>x.id===assetId); if(!a || a.id==='efectivo') return;
-  const px=game.prices[a.id], side=Math.sign(amount), abs=Math.abs(amount), eff = side>0 ? abs*(1+a.spread) : abs*(1-a.spread);
-  if(side>0){ if(game.cash<eff){ toast('Sin efectivo suficiente'); return false }
-    const qty = abs/px; game.positions[a.id]+=qty; game.cash-=eff; log(`Compra ${a.name} ${fmt(abs)} @ ${px.toFixed(2)} (spread ${(a.spread*100).toFixed(1)}%)`,'log-ok');
-    GamifyLocal.addPoints(playerId,RULES.BUY.xp); GamifyLocal.unlock(playerId,RULES.BUY.badge); refreshGamifyUI();
-  }else{
-    const pv=game.positions[a.id]*px; if(pv<=0){ toast('No tienes posición'); return false }
-    const val=Math.min(abs,pv), qty=val/px; game.positions[a.id]-=qty; game.cash+=abs*(1-a.spread);
-    log(`Venta ${a.name} ${fmt(abs)} @ ${px.toFixed(2)} (spread ${(a.spread*100).toFixed(1)}%)`,'log-warn');
-    GamifyLocal.addPoints(playerId,RULES.SELL.xp); refreshGamifyUI();
-  }
-  refreshMarket(); updateKPIs(); return true;
-}
-
-/* =================== RONDAS =================== */
-function normalSample(){ let u=0,v=0; while(u===0)u=Math.random(); while(v===0) v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v) }
-function stepRound(){
-  const debtCost = game.debt*(game.debtRate/12); if(debtCost>0){ game.cash-=debtCost; log(`Interés de deuda: -${fmt(debtCost)}`,'log-bad') }
-  let opex = 500 + 0.002*netWorth(); if(game.pu.cut){ opex*=0.85; game.pu.cut=false; log('Eficiencia: -15% gasto fijo','log-ok') } game.cash-=opex; log(`Gasto fijo: -${fmt(opex)}`,'log-warn');
-  ASSETS.forEach(a=>{ if(a.id==='efectivo') return;
-    let mu=game.mu[a.id] + game.shockMu + (game.assetMu[a.id]||0);
-    let sigma=game.sigma[a.id] + game.shockSigma + (game.assetSigma[a.id]||0);
-    if(game.pu.hedge>0) sigma*=0.7; if(game.pu.report>0) mu+=0.02;
-    const r = mu/12 + sigma/Math.sqrt(12) * normalSample();
-    game.prices[a.id]=Math.max(1, game.prices[a.id]*(1+r));
-  });
-  const divi = 0.01*(game.positions['bonos']*game.prices['bonos']||0) + 0.002*(game.positions['acciones']*game.prices['acciones']||0) + 0.002*(game.positions['etf']*game.prices['etf']||0);
-  if(divi>0){ game.cash+=divi; log(`Cupones/Dividendos: +${fmt(divi)}`,'log-ok') }
-  const nw = netWorth(); const minCash = game.reserveMin*nw;
-  if(game.cash<minCash){
-    let gap=minCash-game.cash; for(const a of ASSETS.filter(x=>x.id!=='efectivo')){ if(gap<=0) break; const pv=game.positions[a.id]*game.prices[a.id]; if(pv<=0) continue; const sell=Math.min(pv,gap); trade(a.id,-sell); gap-=sell; }
-    log('Venta forzada por política de caja','log-warn');
-  }
-  if(game.pu.hedge>0) game.pu.hedge--; if(game.pu.report>0) game.pu.report--; updatePuTimers();
-  pushAndDrawNW(); refreshMarket(); updateKPIs();
-  const nw2=netWorth(); if(nw2<=0){ endGame(false,'Quebraste (NW ≤ 0)'); return }
-  if(nw2>=game.goal && game.cash/nw2>=0.12 && game.debt/nw2<=0.35){ endGame(true,'¡Meta alcanzada con finanzas sanas!'); return }
-  game.round++; $("#modeLbl").textContent="Ronda "+game.round;
-}
-function endGame(win,msg){
-  toast(win?'🏆 Victoria':'💥 Derrota'); log(msg, win?'log-ok':'log-bad');
-  if(win){ GamifyLocal.addPoints(playerId,RULES.GOAL.xp); GamifyLocal.unlock(playerId,RULES.GOAL.badge); refreshGamifyUI(); }
-  ["btnNext","btnBuy","btnSell","btnLoan","btnRepay","btnEvent","btnQuiz","btnRandomPU","puHedge","puReport","puCut","puRebal"].forEach(id=>{ const el=$("#"+id); if(el) el.disabled=true; });
-}
-
-/* =================== POWER UPS =================== */
-function updatePuTimers(){ const t=[]; if(game.pu.hedge>0) t.push(`Cobertura:${game.pu.hedge}`); if(game.pu.report>0) t.push(`Reporte:${game.pu.report}`); $("#puTimers").textContent="Timers: "+(t.length?t.join(' · '):'—'); }
-$("#puHedge").onclick=()=>{ game.pu.hedge=Math.max(game.pu.hedge,3); updatePuTimers(); toast('🛡️ Cobertura (3)'); GamifyLocal.addPoints(playerId,RULES.PU.xp); GamifyLocal.unlock(playerId,RULES.PU.badge); refreshGamifyUI(); };
-$("#puReport").onclick=()=>{ game.pu.report=Math.max(game.pu.report,3); updatePuTimers(); toast('📊 Reporte (3)'); GamifyLocal.addPoints(playerId,RULES.PU.xp); GamifyLocal.unlock(playerId,RULES.PU.badge); refreshGamifyUI(); };
-$("#puCut").onclick=()=>{ game.pu.cut=true; toast('✂️ Eficiencia (esta ronda)'); GamifyLocal.addPoints(playerId,RULES.PU.xp); GamifyLocal.unlock(playerId,RULES.PU.badge); refreshGamifyUI(); };
-$("#puRebal").onclick=()=>{ const totals={}; let sum=0; ASSETS.forEach(a=>{ if(a.id==='efectivo') return; const v=game.positions[a.id]*game.prices[a.id]; totals[a.id]=v; sum+=v; }); const avg=sum/Math.max(1,(ASSETS.length-1));
-  for(const id in totals){ const diff=totals[id]-avg; if(Math.abs(diff)/Math.max(1,avg)<0.1) continue; if(diff>0){ trade(id,-diff*0.05) } else { trade(id, Math.min(game.cash,-diff*0.05)) } }
-  updateKPIs(); toast('🔁 Rebalanceo ejecutado'); GamifyLocal.addPoints(playerId,RULES.PU.xp); GamifyLocal.unlock(playerId,RULES.PU.badge); refreshGamifyUI();
-};
-$("#btnRandomPU").onclick=()=>{ const f=[$("#puHedge").onclick,$("#puReport").onclick,$("#puCut").onclick,$("#puRebal").onclick]; pick(f)(); };
-
-/* =================== QUIZ =================== */
-const overlay=$("#overlay"), qTitle=$("#qTitle"), qCat=$("#qCat"), qText=$("#qText"), qOpts=$("#qOpts"), qClose=$("#qClose");
-function applyBonus(b){ if(b.mu){ game.shockMu+=b.mu } if(b.risk){ game.shockSigma=Math.max(0, game.shockSigma+b.risk) } if(b.cash){ game.cash+=b.cash } if(b.liq){ game.cash+=(b.liq/100)*netWorth() } if(b.lev){ game.debt=Math.max(0, game.debt + b.lev*game.debt) } }
-function showQuestion(){
-  const c = pick(BANK_QUEST); overlay.style.display='flex';
-  qTitle.textContent="Pregunta: "+c.cat; qText.textContent=c.q; qOpts.innerHTML=''; qClose.style.display='none';
-  // Desordenar opciones
-  const idx=[0,1,2].sort(()=>Math.random()-0.5);
-  idx.forEach((k,renderI)=>{
-    const d=document.createElement('div'); d.className='opt'; d.textContent=c.a[k];
-    d.onclick=()=>{
-      const isOk = (k===c.ok);
-      [...qOpts.children].forEach((n)=>n.classList.remove('correct','wrong'));
-      if(isOk){ d.classList.add('correct'); applyBonus(c.bonus); log(`Correcto — ${c.expl}`,'log-ok'); toast('✅ ¡Correcto! Bono aplicado'); GamifyLocal.addPoints(playerId,RULES.QUIZ_OK.xp); GamifyLocal.unlock(playerId,RULES.QUIZ_OK.badge); }
-      else{ d.classList.add('wrong'); game.cash=Math.max(0,game.cash-500); log(`Incorrecto — ${c.expl} · Penalización: -$500`,'log-bad'); toast('❌ Incorrecto'); GamifyLocal.addPoints(playerId,RULES.QUIZ_FAIL.xp); }
-      updateKPIs(); qClose.style.display='inline-block';
-    };
-    qOpts.appendChild(d);
-  });
-  qClose.onclick=()=>{ overlay.style.display='none' };
-}
-
-/* =================== EVENTOS =================== */
-function triggerEvent(){ const e = pick(EVENTS); e.eff(game); updateKPIs(); toast('Evento: '+e.name) }
-
-/* =================== PRÉSTAMOS =================== */
-function takeLoan(x){ if(x<=0) return; game.debt+=x; game.cash+=x; log(`Préstamo: +${fmt(x)}`,'log-warn'); updateKPIs() }
-function repay(x){ if(x<=0) return; const pay=Math.min(x,game.debt,game.cash); if(pay<=0){ toast('No puedes pagar más'); return } game.debt-=pay; game.cash-=pay; log(`Pago de deuda: -${fmt(pay)}`,'log-ok'); updateKPIs() }
-
-/* =================== HANDLERS =================== */
-$("#market").addEventListener('click',(e)=>{ const b=e.target.closest('button'); if(!b) return; const id=b.dataset.id, act=b.dataset.act; if(act==='buy') trade(id,1000); if(act==='sell') trade(id,-1000); });
-$("#btnBuy").onclick=()=>{ const id=$("#assetSel").value; const amt=+$("#amount").value||0; trade(id, Math.max(100,amt)) };
-$("#btnSell").onclick=()=>{ const id=$("#assetSel").value; const amt=+$("#amount").value||0; trade(id, -Math.max(100,amt)) };
-$("#btnNext").onclick=()=> stepRound();
-$("#btnQuiz").onclick=()=> showQuestion();
-$("#btnEvent").onclick=()=> triggerEvent();
-$("#btnLoan").onclick=()=> takeLoan(+$("#loanAmt").value||0);
-$("#btnRepay").onclick=()=> repay(+$("#loanAmt").value||0);
-$("#resMin").oninput=(e)=>{ game.reserveMin=(+e.target.value)/100; $("#resMinLbl").textContent=(+e.target.value)+'%' };
-$("#btnSetGoal").onclick=()=>{ const v=+$("#goal").value||game.goal; game.goal=v; updateKPIs(); toast('Meta actualizada') };
-document.addEventListener('keydown',(e)=>{ if(e.code==='Space'){ e.preventDefault(); $("#btnNext").click() } if(e.key==='q'||e.key==='Q'){ const id=$("#assetSel").value; trade(id,1000) } if(e.key==='w'||e.key==='W'){ const id=$("#assetSel").value; trade(id,-1000) } if(e.key==='e'||e.key==='E'){ $("#btnRandomPU").click() } });
-
-/* =================== INIT =================== */
-function refreshAll(){ drawChart(game.nwSeries); refreshMarket(); updateKPIs(); refreshGamifyUI(); }
-function init(){ buildFromAssets(); buildMarket(); refreshAll(); log('Juego iniciado · Capital inicial: '+fmt(game.cash),'log-ok'); log('Activos cargados: '+ASSETS.length+' · Usa preguntas 🧠 y power-ups para optimizar','log-warn'); }
-init();
-</script>
 </body>
 </html>
 

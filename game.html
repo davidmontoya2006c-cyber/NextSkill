@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NextSkill · Simulador (tema azul)</title>
+<style>
+:root{
+  --bg:#0b1330; --panel:#0f1e46; --ink:#eaf0ff; --muted:#b9c5ee;
+  --accent:#4aa3ff; --accent2:#2a4dfb; --accent3:#00bfff;
+  --good:#34D399; --warn:#FCD34D; --bad:#F87171;
+  --card:rgba(255,255,255,.06); --bd:rgba(255,255,255,.16);
+  --chip:#213a8f; --chip-ink:#d9e2ff;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);
+  background: radial-gradient(1200px 900px at 10% -10%, #1a2a6c 0%, #0b1330 60%),
+              linear-gradient(135deg, rgba(42,77,251,.12), rgba(0,191,255,.10));}
+h1{margin:12px 0 2px;text-align:center;font-size:26px;color:var(--accent)}
+#subtitle{margin:0 0 10px;text-align:center;font-size:13px;color:var(--muted)}
+kbd{background:#1b2154;color:#eaefff;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:2px 6px;font-size:11px}
+#wrap{display:grid;grid-template-columns: 820px 1fr;gap:12px;max-width:1280px;margin:8px auto;padding:0 12px 16px}
+.card{background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));border:1px solid var(--bd);border-radius:12px;padding:10px}
+.card h3{margin:0 0 6px}
+#left{display:grid; grid-template-rows: 340px 1fr; gap:12px}
+#right{display:grid; grid-template-rows: auto auto auto 1fr; gap:12px}
+#topPanel{display:grid; grid-template-columns: 2fr 1fr; gap:12px}
+#chartCard{position:relative}
+#chart{width:100%;height:300px;border-radius:10px;background:#0c1133;border:1px solid var(--bd)}
+#heat{position:absolute;right:10px;top:10px;font-size:12px;color:var(--muted)}
+#kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 10px}
+.kpi h4{margin:0 0 3px;font-size:12px;color:var(--muted)}
+.kpi .v{font-weight:800}
+.progress{height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:6px}
+.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--bad),var(--warn),var(--good));width:0%}
+#market{display:grid;grid-template-columns: repeat(6,1fr); gap:8px}
+.asset{background:var(--panel);border:1px solid var(--bd);border-radius:10px;padding:8px;position:relative}
+.asset h4{margin:0 0 2px;font-size:13px}
+.asset small{color:var(--muted)}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--chip);color:var(--chip-ink);font-size:11px;font-weight:800}
+.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.sep{height:1px;background:rgba(255,255,255,.08);margin:6px 0}
+.btn{background:var(--accent);color:#071032;border:none;border-radius:8px;padding:6px 9px;font-weight:800;cursor:pointer}
+.btn.ghost{background:transparent;border:1px dashed rgba(255,255,255,.25);color:var(--ink)}
+.btn.warn{background:var(--warn);color:#191300}
+.btn.bad{background:var(--bad);color:#2b0d0d}
+.btn.good{background:var(--good);color:#05140f}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+#controls .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.control{background:var(--panel);border:1px solid var(--bd);border-radius:10px;padding:8px}
+.control h4{margin:0 0 6px;font-size:12px;color:var(--muted)}
+input[type=range]{width:100%}
+#powerups .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pu{background:var(--panel);border:1px solid var(--bd);border-radius:10px;padding:8px;min-height:88px}
+.pu h4{margin:0 0 2px;font-size:13px}
+.tag{display:inline-block;padding:0 8px;border-radius:999px;background:rgba(255,255,255,.08);font-size:11px;margin-top:2px}
+.small{font-size:12px;color:var(--muted)}
+#log{height:260px;overflow:auto;font-size:12px}
+.log-ok{color:#a6f7cd} .log-bad{color:#ffc0c0} .log-warn{color:#ffe29a}
+#statusRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#statusRow .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#213a8f;color:#dfe6ff;font-size:11px;font-weight:800}
+.toast{position:fixed;left:50%;top:10px;transform:translateX(-50%);background:#0f1333;color:#cbd1ff;border:1px solid var(--bd);
+  padding:6px 10px;border-radius:10px;opacity:0;transition:opacity .2s, transform .2s;z-index:20}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+#overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,8,20,.76);z-index:30}
+.modal{width:min(760px,92vw);background:#0f1330;border:1px solid var(--bd);border-radius:14px;padding:14px}
+.modal h2{margin:0 0 6px}
+.opts{display:grid;gap:8px;margin-top:8px}
+.opt{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:8px;cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.correct{border-color:var(--good);background:rgba(52,211,153,.12)}
+.wrong{border-color:var(--bad);background:rgba(248,113,113,.12)}
+.badge2{display:inline-block;padding:2px 8px;border-radius:6px;background:#17347a;font-size:11px;color:#cbd1ff}
+.hr{height:1px;background:rgba(255,255,255,.08);margin:8px 0}
+#infoBtn{position:fixed;top:12px;right:12px;background:#213a8f;border:none;color:#dbe1ff;font-weight:800;border-radius:8px;padding:6px 10px;cursor:pointer;z-index:35}
+#infoBtn:hover{background:#2a4dfb}
+#infoModal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:40}
+#infoWrap{background:#0f1330;border:1px solid var(--bd);border-radius:14px;padding:16px;width:min(760px,90vw);max-height:90vh;overflow:auto}
+#infoWrap h2{margin:0 0 8px}
+#infoWrap ul{margin:0 0 10px 20px;padding:0}
+#infoWrap li{margin:4px 0}
+#gamifyCard{position:relative;overflow:hidden}
+#gamifyCard::before{content:"";position:absolute;inset:-1px;border-radius:12px;
+  background:linear-gradient(135deg, rgba(42,77,251,.35), rgba(0,191,255,.25));filter:blur(14px);opacity:.6;z-index:0}
+#gamifyInner{position:relative;z-index:1}
+.gxp{font-weight:800;font-size:20px}
+.glevel{font-weight:800}
+.gbadges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.gbadge{background:linear-gradient(135deg, #2a4dfb, #00bfff); color:#051033; padding:4px 8px; border-radius:999px; font-weight:800; border:1px solid rgba(255,255,255,.4)}
+.bump{animation:bump .35s ease}
+@keyframes bump{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+</style>
+</head>
+<body>
+<h1>🎮 NextSkill — Simulador Azul</h1>
+<p id="subtitle">Activos dinámicos (desde <b>market_data.json</b>) · XP local.</p>
+<button id="infoBtn">🧭 Instrucciones</button>
+
+<div id="wrap">
+  <div id="left">
+    <div id="topPanel">
+      <div class="card" id="chartCard">
+        <div class="row" style="justify-content:space-between;margin-bottom:6px">
+          <div><span class="badge2">Patrimonio</span><span id="networthLbl" class="badge2">—</span></div>
+          <div id="heat">—</div>
+        </div>
+        <canvas id="chart"></canvas>
+      </div>
+      <div class="card" id="kpisCard">
+        <div id="statusRow">
+          <span class="badge" id="modeLbl">Ronda 1</span>
+          <span class="badge" id="goalLbl">Meta: $250,000</span>
+          <span class="badge" id="cashLbl">Efectivo: —</span>
+          <span class="badge" id="debtLbl">Deuda: —</span>
+        </div>
+        <div id="kpis" style="margin-top:8px">
+          <div class="kpi"><h4>Liquidez</h4><div class="v" id="liqV">—</div><div class="progress"><span id="liqBar"></span></div></div>
+          <div class="kpi"><h4>Apalancamiento</h4><div class="v" id="levV">—</div><div class="progress"><span id="levBar"></span></div></div>
+          <div class="kpi"><h4>Diversificación</h4><div class="v" id="divV">—</div><div class="progress"><span id="divBar"></span></div></div>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn" id="btnNext">▶️ Siguiente ronda</button>
+          <button class="btn ghost" id="btnQuiz">🧠 Pregunta</button>
+          <button class="btn ghost" id="btnEvent">🌀 Evento</button>
+          <span class="small">Velocidad: </span>
+          <input type="range" id="spd" min="0" max="100" value="50"/>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Mercado (activos)</h3>
+      <div id="market"></div>
+    </div>
+  </div>
+
+  <div id="right">
+    <div class="card" id="gamifyCard">
+      <div id="gamifyInner">
+        <h3>🏅 Progreso del jugador</h3>
+        <div class="row" style="gap:14px">
+          <div><span class="badge2">XP</span> <span id="xpLbl" class="gxp">0</span></div>
+          <div><span class="badge2">Nivel</span> <span id="lvlLbl" class="glevel">1</span></div>
+        </div>
+        <div class="gbadges" id="badgesWrap" style="margin-top:6px"></div>
+      </div>
+    </div>
+
+    <div class="card" id="controls">
+      <h3>Controles rápidos</h3>
+      <div class="grid">
+        <div class="control">
+          <h4>Compra/Venta instantánea</h4>
+          <div class="row">
+            <select id="assetSel"></select>
+            <input type="number" id="amount" value="1000" min="100" step="100" style="width:120px"/>
+          </div>
+          <div class="row" style="margin-top:6px">
+            <button class="btn" id="btnBuy">Comprar</button>
+            <button class="btn bad" id="btnSell">Vender</button>
+          </div>
+          <div class="small">Compra por monto; aplica spread.</div>
+        </div>
+        <div class="control">
+          <h4>Préstamo / Pagar deuda</h4>
+          <div class="row">
+            <input type="number" id="loanAmt" value="5000" min="1000" step="500"/>
+            <button class="btn warn" id="btnLoan">Tomar préstamo</button>
+            <button class="btn good" id="btnRepay">Pagar</button>
+          </div>
+          <div class="small">Interés anual 8% prorrateado.</div>
+        </div>
+        <div class="control">
+          <h4>Política de caja</h4>
+          <div class="row">
+            <span class="small">Reserva mínima (%):</span>
+            <input type="range" id="resMin" min="0" max="50" value="10"/>
+            <span id="resMinLbl" class="small">10%</span>
+          </div>
+        </div>
+        <div class="control">
+          <h4>Objetivo</h4>
+          <div class="row">
+            <input type="number" id="goal" value="250000" step="5000"/>
+            <button class="btn" id="btnSetGoal">Actualizar meta</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="powerups">
+      <h3>Power-Ups</h3>
+      <div class="grid">
+        <div class="pu"><h4>🛡️ Cobertura</h4><div class="small">-30% σ (3 rondas).</div><button class="btn" id="puHedge">Activar</button></div>
+        <div class="pu"><h4>📊 Reporte</h4><div class="small">+2% μ (3 rondas).</div><button class="btn" id="puReport">Activar</button></div>
+        <div class="pu"><h4>✂️ Eficiencia</h4><div class="small">-15% gasto fijo (1).</div><button class="btn" id="puCut">Activar</button></div>
+        <div class="pu"><h4>🔁 Rebalanceo</h4><div class="small">Mejora diversificación.</div><button class="btn" id="puRebal">Activar</button></div>
+      </div>
+      <div class="hr"></div>
+      <div class="row">
+        <button class="btn ghost" id="btnRandomPU">🎲 Aleatorio</button>
+        <span id="puTimers" class="small">Timers: —</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Registro</h3>
+      <div id="log"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="overlay">
+  <div class="modal">
+    <h2 id="qTitle">Pregunta</h2>
+    <div><span class="badge2" id="qCat">Fundamental</span></div>
+    <p id="qText" class="small"></p>
+    <div id="qOpts" class="opts"></div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px">
+      <button class="btn" id="qClose" style="display:none">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="infoModal">
+  <div id="infoWrap">
+    <h2>🧭 Instrucciones</h2>
+    <ul>
+      <li>Espacio: Siguiente ronda</li>
+      <li>Q/W: Compra/Venta rápida ($1,000)</li>
+      <li>E: Power‑Up aleatorio</li>
+    </ul>
+    <div class="row" style="justify-content:flex-end;margin-top:8px">
+      <button class="btn" id="closeInfo">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = s=>document.querySelector(s);
+const fmt = v => '$'+Math.round(v).toLocaleString('en-US');
+const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1100) }
+function log(line, cls=''){ const d=document.createElement('div'); d.textContent=line; if(cls) d.className=cls; $("#log").prepend(d) }
+
+// Instrucciones modal
+const infoBtn=$("#infoBtn"), infoModal=$("#infoModal"), closeInfo=$("#closeInfo");
+infoBtn.onclick=()=>{ infoModal.style.display='flex' }
+closeInfo.onclick=()=>{ infoModal.style.display='none' }
+window.addEventListener('click',e=>{ if(e.target===infoModal) infoModal.style.display='none' })
+
+// Canvas chart
+const canvas = $("#chart"); const ctx = canvas.getContext('2d');
+function resizeCanvas(){ const r = $("#chartCard").getBoundingClientRect(); canvas.width = r.width-4; canvas.height = 260 }
+resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+function drawChart(series){
+  const w=canvas.width,h=canvas.height; ctx.clearRect(0,0,w,h);
+  ctx.fillStyle="#0a0f2a"; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle="rgba(255,255,255,.08)"; ctx.lineWidth=1;
+  for(let i=0;i<=6;i++){ const y=i*h/6; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke() }
+  const min = Math.min(...series)*0.98, max = Math.max(...series)*1.02;
+  const xstep = w/Math.max(1,(series.length-1));
+  ctx.strokeStyle="#7c9cff"; ctx.lineWidth=2; ctx.beginPath();
+  series.forEach((v,i)=>{ const x=i*xstep, y=h - (v-min)/(max-min)*h; if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+  ctx.stroke();
+}
+
+// Carga de activos (desde JSON)
+let ASSETS = [];
+async function loadAssets(){
+  try{
+    ASSETS = await fetch('market_data.json').then(r=>r.json());
+  }catch(e){
+    alert('Falta market_data.json junto a game.html');
+    ASSETS = [];
+  }
+}
+
+// Preguntas
+const BANK_QUEST=[
+ {cat:'Estados', q:'¿Qué estado presenta activos, pasivos y capital?', a:['Balance general','Estado de resultados','Flujo de efectivo'], ok:0, expl:'El balance muestra la posición financiera a una fecha.', bonus:{mu:+0.01}},
+ {cat:'Liquidez', q:'Un DSO alto suele implicar…', a:['Cobro lento','Mejor rotación','Más liquidez inmediata'], ok:0, expl:'Más días para convertir ventas a efectivo.', bonus:{liq:+8}},
+ {cat:'Valuación', q:'Un P/E muy alto sugiere…', a:['Altas expectativas','Problemas de caja','Mayor deuda'], ok:0, expl:'Mercado paga más por utilidades futuras.', bonus:{mu:+0.005}},
+ {cat:'Flujos', q:'El flujo clave para sostenibilidad operativa es…', a:['Flujo de operación','Financiamiento','Inversión'], ok:0, expl:'FO mide caja del core del negocio.', bonus:{cash:+1200}},
+];
+
+const EVENTS=[
+ {name:'📉 Hike de tasas', eff: s=>{ s.shockMu-=0.02; s.shockSigma+=0.02; log('Tasas al alza: baja retorno esperado y sube volatilidad','log-warn') }},
+ {name:'🐂 Mini bull run', eff: s=>{ s.shockMu+=0.03; s.shockSigma-=0.01; log('Rally: sube retorno esperado y cae volatilidad','log-ok') }},
+ {name:'🛢️ Shock commodities', eff: s=>{ s.assetMu.etf+=0.01; s.assetMu.commodities+=0.03; log('Materias primas al alza','log-warn') }},
+];
+
+// Estado del juego
+const game={round:1,cash:50000,debt:0,debtRate:0.08,positions:{},prices:{},mu:{},sigma:{},spread:{},
+  shockMu:0,shockSigma:0,assetMu:{etf:0,commodities:0,inmuebles:0},assetSigma:{etf:0},
+  pu:{hedge:0,report:0,cut:false},reserveMin:0.10,goal:250000,nwSeries:[50000]};
+
+const marketEl=$("#market"), assetSel=$("#assetSel");
+function buildFromAssets(){
+  game.positions={}; game.prices={}; game.mu={}; game.sigma={}; game.spread={};
+  ASSETS.forEach(a=>{
+    game.positions[a.id]= (a.id==='efectivo'? 50000 : 0);
+    game.prices[a.id]= (a.id==='efectivo'? 1 : 100);
+    game.mu[a.id]= a.mu ?? 0; game.sigma[a.id]= a.sigma ?? 0; game.spread[a.id]= a.spread ?? 0;
+  });
+}
+function buildMarket(){
+  marketEl.innerHTML=''; assetSel.innerHTML='';
+  ASSETS.forEach(a=>{
+    if(a.id!=='efectivo') assetSel.innerHTML += `<option value="${a.id}">${a.name}</option>`;
+    const div=document.createElement('div'); div.className='asset'; div.dataset.id=a.id;
+    div.innerHTML=`
+      <h4>${a.name}</h4>
+      <div class="row">
+        <span class="pill" style="font-weight:800">${(a.kind||'—').toString().toUpperCase()}</span>
+        <small>μ ${(a.mu*100).toFixed(1)}% · σ ${(a.sigma*100).toFixed(1)}% · spread ${(a.spread*100).toFixed(1)}%</small>
+      </div>
+      <div class="sep"></div>
+      <div class="row">
+        <span class="small">Precio:</span><b id="p-${a.id}">$${game.prices[a.id].toFixed(2)}</b>
+        <span class="small">Posición:</span><b id="pos-${a.id}">${fmt(game.positions[a.id])}</b>
+      </div>
+      ${a.id!=='efectivo' ? `<div class="row" style="margin-top:6px">
+        <button class="btn" data-act="buy" data-id="${a.id}">Comprar +$1,000</button>
+        <button class="btn bad" data-act="sell" data-id="${a.id}">Vender $1,000</button>
+      </div>`:''}`;
+    marketEl.appendChild(div);
+  });
+}
+function refreshMarket(){
+  ASSETS.forEach(a=>{
+    const p=document.querySelector("#p-"+a.id); const pos=document.querySelector("#pos-"+a.id);
+    if(p) p.textContent="$"+game.prices[a.id].toFixed(2);
+    if(pos) pos.textContent=fmt(game.positions[a.id]);
+  });
+}
+function netWorth(){ let v=game.cash-game.debt; ASSETS.forEach(a=>{ if(a.id!=='efectivo') v+= game.positions[a.id]*game.prices[a.id] }); return v; }
+function updateKPIs(){
+  const nw=netWorth();
+  $("#networthLbl").textContent = fmt(nw);
+  $("#cashLbl").textContent = "Efectivo: "+fmt(game.cash);
+  $("#debtLbl").textContent = "Deuda: "+fmt(game.debt);
+  const liq = game.cash / Math.max(1, nw);
+  const lev = game.debt / Math.max(1, nw);
+  $("#liqV").textContent = (liq*100).toFixed(1)+"%";
+  $("#levV").textContent = (lev*100).toFixed(1)+"%";
+  const weights={}; ASSETS.forEach(a=>{ if(a.id!=='efectivo') weights[a.id]= game.positions[a.id]*game.prices[a.id] });
+  const sum=Object.values(weights).reduce((s,v)=>s+v,0)||1; let h=0; for(const k in weights){ const w=weights[k]/sum; h+=w*w }
+  const div = 1-h;
+  $("#divV").textContent = (div*100).toFixed(1)+"%";
+  $("#liqBar").style.width = Math.min(100,Math.max(0,liq*100))+'%';
+  $("#levBar").style.width = Math.min(100,Math.max(0,lev*100))+'%';
+  $("#divBar").style.width = Math.min(100,Math.max(0,div*100))+'%';
+  $("#modeLbl").textContent = "Ronda "+game.round;
+  $("#goalLbl").textContent = "Meta: "+fmt(game.goal);
+  $("#heat").textContent = `μ ${(game.shockMu*100).toFixed(1)}% · σ ${(game.shockSigma*100).toFixed(1)}%`;
+}
+function pushAndDrawNW(){ const nw2=netWorth(); game.nwSeries.push(nw2); drawChart(game.nwSeries); }
+
+// Gamificación
+const GamifyLocal = {
+  ns: 'NextSkill_Local',
+  _load(){ return JSON.parse(localStorage.getItem(this.ns) || '{}'); },
+  _save(d){ localStorage.setItem(this.ns, JSON.stringify(d)); },
+  get(){ const db=this._load(); db.points=db.points||0; db.achievements=db.achievements||[]; this._save(db); return db; },
+  add(pts){ const db=this._load(); db.points=Math.max(0,(db.points||0)+pts); this._save(db); return db; },
+  badge(name){ const db=this._load(); db.achievements=db.achievements||[]; if(!db.achievements.includes(name)) db.achievements.push(name); this._save(db); return db; }
+};
+function refreshGamifyUI(){
+  const u = GamifyLocal.get();
+  $("#xpLbl").textContent = u.points||0;
+  $("#lvlLbl").textContent = Math.floor((u.points||0)/100)+1;
+  const wrap=$("#badgesWrap"); wrap.innerHTML=''; (u.achievements||[]).forEach(b=>{
+    const s=document.createElement('span'); s.className='gbadge'; s.textContent=b; wrap.appendChild(s);
+  });
+}
+const RULES={BUY:10,SELL:5,QUIZ_OK:25,QUIZ_FAIL:-5,GOAL:100,PU:15};
+
+// Trading por monto
+function trade(assetId, amount){
+  const a=ASSETS.find(x=>x.id===assetId); if(!a||a.id==='efectivo') return;
+  const px=game.prices[a.id], side=Math.sign(amount), abs=Math.abs(amount);
+  const eff = side>0 ? abs*(1+a.spread) : abs*(1-a.spread);
+  if(side>0){
+    if(game.cash < eff){ toast('Sin efectivo suficiente'); return false }
+    const qty = abs/px; game.positions[a.id]+=qty; game.cash-=eff; log(`Compra ${a.name} ${fmt(abs)} @ ${px.toFixed(2)}`,'log-ok'); GamifyLocal.add(RULES.BUY);
+  }else{
+    const pv=game.positions[a.id]*px; if(pv<=0){ toast('No tienes posición'); return false }
+    const val=Math.min(abs,pv), qty=val/px; game.positions[a.id]-=qty; game.cash+=abs*(1-a.spread); log(`Venta ${a.name} ${fmt(abs)} @ ${px.toFixed(2)}`,'log-warn'); GamifyLocal.add(RULES.SELL);
+  }
+  refreshGamifyUI(); refreshMarket(); updateKPIs(); return true;
+}
+
+// Aleatorio normal
+function normalSample(){ let u=0,v=0; while(u===0)u=Math.random(); while(v===0) v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v) }
+
+// Ronda
+function stepRound(){
+  const debtCost = game.debt * (game.debtRate/12);
+  if(debtCost>0){ game.cash -= debtCost; log(`Interés: -${fmt(debtCost)}`,'log-bad') }
+  let opex = 500 + 0.002*netWorth();
+  if(game.pu.cut){ opex *= 0.85; game.pu.cut=false; log('Eficiencia: -15% gasto','log-ok') }
+  game.cash -= opex; log(`Gasto fijo: -${fmt(opex)}`,'log-warn');
+  ASSETS.forEach(a=>{
+    if(a.id==='efectivo') return;
+    let mu=game.mu[a.id]+game.shockMu+(game.assetMu[a.id]||0);
+    let sigma=game.sigma[a.id]+game.shockSigma+(game.assetSigma[a.id]||0);
+    if(game.pu.hedge>0) sigma*=0.7;
+    if(game.pu.report>0) mu+=0.02;
+    const r=mu/12 + sigma/Math.sqrt(12) * normalSample();
+    game.prices[a.id]=Math.max(1, game.prices[a.id]*(1+r));
+  });
+  const divi = 0.01*(game.positions['bonos']*game.prices['bonos']||0)
+             + 0.002*(game.positions['acciones']*game.prices['acciones']||0)
+             + 0.002*(game.positions['etf']*game.prices['etf']||0);
+  if(divi>0){ game.cash += divi; log(`Cupones/Dividendos: +${fmt(divi)}`,'log-ok') }
+  const nw=netWorth(); const minCash=game.reserveMin*nw;
+  if(game.cash<minCash){
+    let rem=minCash-game.cash;
+    for(const a of ASSETS.filter(x=>x.id!=='efectivo')){
+      if(rem<=0) break;
+      const pv=game.positions[a.id]*game.prices[a.id]; if(pv<=0) continue;
+      const sell=Math.min(pv, rem); trade(a.id, -sell); rem-=sell;
+    }
+    log('Venta forzada por caja','log-warn');
+  }
+  if(game.pu.hedge>0) game.pu.hedge--;
+  if(game.pu.report>0) game.pu.report--;
+  updatePuTimers();
+  pushAndDrawNW(); refreshMarket(); updateKPIs();
+  const nw2=netWorth();
+  if(nw2<=0){ endGame(false,'Quebraste'); return }
+  if(nw2>=game.goal && game.cash/nw2>=0.12 && game.debt/nw2<=0.35){ endGame(true,'Meta alcanzada'); return }
+  game.round++; $("#modeLbl").textContent="Ronda "+game.round;
+}
+function endGame(win,msg){
+  toast(win?'🏆 Victoria':'💥 Derrota'); log(msg, win?'log-ok':'log-bad');
+  if(win){ GamifyLocal.add(RULES.GOAL); refreshGamifyUI(); }
+  ["btnNext","btnBuy","btnSell","btnLoan","btnRepay","btnEvent","btnQuiz","btnRandomPU","puHedge","puReport","puCut","puRebal"].forEach(id=>{ const el=$("#"+id); if(el) el.disabled=true; });
+}
+
+// PowerUps
+function updatePuTimers(){ const t=[]; if(game.pu.hedge>0) t.push(`Cobertura:${game.pu.hedge}`); if(game.pu.report>0) t.push(`Reporte:${game.pu.report}`); $("#puTimers").textContent="Timers: "+(t.length?t.join(' · '):'—'); }
+$("#puHedge").onclick = ()=>{ game.pu.hedge=Math.max(game.pu.hedge,3); updatePuTimers(); toast('🛡️ Cobertura (3)'); GamifyLocal.add(RULES.PU); refreshGamifyUI(); };
+$("#puReport").onclick = ()=>{ game.pu.report=Math.max(game.pu.report,3); updatePuTimers(); toast('📊 Reporte (3)'); GamifyLocal.add(RULES.PU); refreshGamifyUI(); };
+$("#puCut").onclick = ()=>{ game.pu.cut=true; toast('✂️ Eficiencia'); GamifyLocal.add(RULES.PU); refreshGamifyUI(); };
+$("#puRebal").onclick = ()=>{
+  const totals={}; let sum=0;
+  ASSETS.forEach(a=>{ if(a.id==='efectivo') return; const v=game.positions[a.id]*game.prices[a.id]; totals[a.id]=v; sum+=v; });
+  const avg = sum/Math.max(1,(ASSETS.length-1));
+  for(const id in totals){
+    const diff=totals[id]-avg;
+    if(Math.abs(diff)/Math.max(1,avg)<0.1) continue;
+    if(diff>0){ trade(id, -diff*0.05) } else { trade(id, Math.min(game.cash, -diff*0.05)) }
+  }
+  updateKPIs(); toast('🔁 Rebalanceo'); GamifyLocal.add(RULES.PU); refreshGamifyUI();
+};
+$("#btnRandomPU").onclick = ()=>{ const fns=[$("#puHedge").onclick,$("#puReport").onclick,$("#puCut").onclick,$("#puRebal").onclick]; pick(fns)(); };
+
+// Preguntas
+const overlay=$("#overlay"), qTitle=$("#qTitle"), qText=$("#qText"), qOpts=$("#qOpts"), qClose=$("#qClose");
+function applyBonus(b){ if(b.mu) game.shockMu += b.mu; if(b.cash) game.cash += b.cash; if(b.liq) game.cash += (b.liq/100)*netWorth(); }
+function showQuestion(){
+  const c = pick(BANK_QUEST);
+  overlay.style.display='flex';
+  qTitle.textContent="Pregunta: "+c.cat;
+  qText.textContent=c.q;
+  qOpts.innerHTML=''; qClose.style.display='none';
+  const idx=[0,1,2].sort(()=>Math.random()-0.5);
+  idx.forEach((k)=>{
+    const d=document.createElement('div'); d.className='opt'; d.textContent=c.a[k];
+    d.onclick=()=>{
+      const ok=(k===c.ok);
+      [...qOpts.children].forEach((n,kk)=>{ const real=idx[kk]; if(real===c.ok) n.classList.add('correct'); });
+      if(!ok){ log(`Incorrecto — ${c.expl} · -$500`, 'log-bad'); game.cash=Math.max(0,game.cash-500); GamifyLocal.add(RULES.QUIZ_FAIL); }
+      else { log(`Correcto — ${c.expl}`, 'log-ok'); applyBonus(c.bonus||{}); GamifyLocal.add(RULES.QUIZ_OK); }
+      refreshGamifyUI(); updateKPIs(); qClose.style.display='inline-block';
+    };
+    qOpts.appendChild(d);
+  });
+  qClose.onclick=()=>{ overlay.style.display='none' };
+}
+
+// Eventos
+function triggerEvent(){ const e = pick(EVENTS); e.eff(game); updateKPIs(); toast('Evento: '+e.name) }
+
+// Préstamos
+function takeLoan(x){ if(x<=0) return; game.debt+=x; game.cash+=x; log(`Préstamo: +${fmt(x)}`,'log-warn'); updateKPIs() }
+function repay(x){ if(x<=0) return; const pay=Math.min(x,game.debt,game.cash); if(pay<=0){ toast('No puedes pagar más'); return } game.debt-=pay; game.cash-=pay; log(`Pago deuda: -${fmt(pay)}`,'log-ok'); updateKPIs() }
+
+// Handlers
+document.querySelector("#market").addEventListener('click',(e)=>{
+  const b=e.target.closest('button'); if(!b) return;
+  const id=b.dataset.id, act=b.dataset.act;
+  if(act==='buy') trade(id, 1000);
+  if(act==='sell') trade(id, -1000);
+});
+$("#btnBuy").onclick=()=>{ const id=$("#assetSel").value; const amt=+$("#amount").value||0; trade(id, Math.max(100,amt)) };
+$("#btnSell").onclick=()=>{ const id=$("#assetSel").value; const amt=+$("#amount").value||0; trade(id, -Math.max(100,amt)) };
+$("#btnNext").onclick=()=> stepRound();
+$("#btnQuiz").onclick=()=> showQuestion();
+$("#btnEvent").onclick=()=> triggerEvent();
+$("#btnLoan").onclick=()=> takeLoan(+$("#loanAmt").value||0);
+$("#btnRepay").onclick=()=> repay(+$("#loanAmt").value||0);
+$("#resMin").oninput=(e)=>{ game.reserveMin=(+e.target.value)/100; $("#resMinLbl").textContent=(+e.target.value)+'%' };
+$("#btnSetGoal").onclick=()=>{ const v=+$("#goal").value||game.goal; game.goal=v; updateKPIs(); toast('Meta actualizada') };
+document.addEventListener('keydown',(e)=>{ if(e.code==='Space'){ e.preventDefault(); $("#btnNext").click() } if(e.key==='q'||e.key==='Q'){ const id=$("#assetSel").value; trade(id, 1000) } if(e.key==='w'||e.key==='W'){ const id=$("#assetSel").value; trade(id, -1000) } if(e.key==='e'||e.key==='E'){ $("#btnRandomPU").click() } });
+
+function refreshAll(){ drawChart(game.nwSeries); refreshMarket(); updateKPIs(); refreshGamifyUI(); }
+async function init(){
+  await loadAssets();
+  if(!ASSETS.length){ document.body.innerHTML="<h2 style='color:white;text-align:center;margin-top:40px'>Falta <code>market_data.json</code></h2>"; return; }
+  buildFromAssets(); buildMarket(); refreshAll();
+  log('Juego iniciado · Capital inicial: '+fmt(game.cash),'log-ok');
+}
+init();
+</script>
+</body>
+</html>

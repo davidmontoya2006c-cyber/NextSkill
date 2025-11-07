@@ -1,0 +1,50 @@
+[
+  {
+    "id": "efectivo",
+    "name": "Efectivo",
+    "kind": "cash",
+    "mu": 0.0,
+    "sigma": 0.0,
+    "spread": 0.0
+  },
+  {
+    "id": "acciones",
+    "name": "Acciones",
+    "kind": "equity",
+    "mu": 0.1,
+    "sigma": 0.2,
+    "spread": 0.01
+  },
+  {
+    "id": "bonos",
+    "name": "Bonos",
+    "kind": "bond",
+    "mu": 0.05,
+    "sigma": 0.08,
+    "spread": 0.005
+  },
+  {
+    "id": "etf",
+    "name": "ETF Global",
+    "kind": "etf",
+    "mu": 0.08,
+    "sigma": 0.15,
+    "spread": 0.008
+  },
+  {
+    "id": "inmuebles",
+    "name": "Inmuebles",
+    "kind": "re",
+    "mu": 0.07,
+    "sigma": 0.12,
+    "spread": 0.01
+  },
+  {
+    "id": "commodities",
+    "name": "Commodities",
+    "kind": "com",
+    "mu": 0.06,
+    "sigma": 0.18,
+    "spread": 0.012
+  }
+]
