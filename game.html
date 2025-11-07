@@ -519,4 +519,119 @@ async function init(){
 init();
 </script>
 </body>
+<!-- === MINI JUEGO CONTABLE === -->
+<style>
+  #contaBtn{position:fixed;bottom:16px;right:16px;background:linear-gradient(135deg,#4aa3ff,#2a4dfb);
+   color:#fff;border:none;padding:10px 16px;border-radius:12px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.4);z-index:60}
+  #contaModal{position:fixed;inset:0;background:rgba(10,12,30,.88);display:none;align-items:center;justify-content:center;z-index:70}
+  #contaWrap{background:#0b1330;border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:16px;width:min(800px,90vw);max-height:90vh;overflow:auto;color:#eaf0ff}
+  #contaWrap h2{margin-top:0;color:#4aa3ff}
+  #contaGame .bank{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:12px 0}
+  .cardConta{background:#1a2350;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:8px;cursor:grab}
+  .dropConta{background:#101a3a;border:2px dashed rgba(255,255,255,.25);border-radius:10px;padding:10px;min-height:90px;margin-top:10px}
+  .dropConta.active{border-color:#00bfff;background:rgba(0,191,255,.08)}
+  #quizConta .opt{background:#1c2760;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:6px;margin:4px 0;cursor:pointer}
+  .opt.correct{border-color:#34D399;background:rgba(52,211,153,.12)}.opt.wrong{border-color:#F87171;background:rgba(248,113,113,.12)}
+  </style>
+  
+  <button id="contaBtn">🧾 Juego Contable</button>
+  
+  <div id="contaModal">
+    <div id="contaWrap">
+      <h2>🧾 Mini Juego de Contabilidad</h2>
+      <p>Arrastra cada cuenta al grupo correcto (Activo, Pasivo o Capital).</p>
+      <div id="contaGame">
+        <div class="bank" id="contaBank"></div>
+        <div class="row" style="gap:10px">
+          <div style="flex:1"><b>Activo</b><div class="dropConta" data-zone="activo"></div></div>
+          <div style="flex:1"><b>Pasivo</b><div class="dropConta" data-zone="pasivo"></div></div>
+          <div style="flex:1"><b>Capital</b><div class="dropConta" data-zone="capital"></div></div>
+        </div>
+        <p id="contaMsg" style="color:#b9c5ee;margin-top:8px"></p>
+        <button class="btn" id="nextQuiz" style="margin-top:10px">🧠 Quiz rápido</button>
+      </div>
+      <div id="quizConta" style="display:none">
+        <h3>Reto relámpago</h3>
+        <p id="qConta"></p>
+        <div id="optsConta"></div>
+        <p id="feedbackConta"></p>
+        <button class="btn" id="backConta">← Volver al simulador</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  const contaBtn=document.querySelector("#contaBtn"), contaModal=document.querySelector("#contaModal");
+  const contaBank=document.querySelector("#contaBank"), contaMsg=document.querySelector("#contaMsg");
+  const contaDropzones=document.querySelectorAll(".dropConta");
+  const nextQuiz=document.querySelector("#nextQuiz"), quizConta=document.querySelector("#quizConta");
+  const qConta=document.querySelector("#qConta"), optsConta=document.querySelector("#optsConta"), feedbackConta=document.querySelector("#feedbackConta"), backConta=document.querySelector("#backConta");
+  
+  const CONTAS=[
+   {n:"Caja y Bancos",z:"activo"},{n:"Clientes",z:"activo"},{n:"Proveedores",z:"pasivo"},
+   {n:"Deuda Bancaria LP",z:"pasivo"},{n:"Capital Social",z:"capital"},{n:"Utilidades Retenidas",z:"capital"}
+  ];
+  const QUIZ=[
+   {q:"¿Qué fórmula cumple el Balance General?",o:["Activo = Pasivo + Capital","Activo + Pasivo = Capital","Capital = Activo - Pasivo"],c:0},
+   {q:"¿En qué grupo entra 'Inventarios'?",o:["Pasivo","Activo","Capital"],c:1},
+   {q:"¿Qué mide el Estado de Resultados?",o:["Situación financiera","Rentabilidad","Liquidez"],c:1}
+  ];
+  
+  let correctas=0;
+  function resetConta(){
+    contaBank.innerHTML='';
+    CONTAS.forEach((c)=>{
+      const d=document.createElement('div');
+      d.className='cardConta'; d.textContent=c.n; d.draggable=true;
+      d.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',c.n));
+      contaBank.appendChild(d);
+    });
+    contaMsg.textContent="Arrastra las cuentas al grupo correcto.";
+    contaDropzones.forEach(z=>{
+      z.innerHTML=''; z.classList.remove('active');
+      z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('active')});
+      z.addEventListener('dragleave',()=>z.classList.remove('active'));
+      z.addEventListener('drop',e=>{
+        e.preventDefault(); z.classList.remove('active');
+        const name=e.dataTransfer.getData('text/plain'); const item=CONTAS.find(x=>x.n===name);
+        if(!item)return; const div=document.createElement('div');div.textContent=name;div.className='cardConta';z.appendChild(div);
+        if(z.dataset.zone===item.z){correctas++; contaMsg.textContent=`✅ Correcto (${correctas}/6)`;}
+        else contaMsg.textContent=`❌ Incorrecto (${correctas}/6)`;
+        if(correctas===6){contaMsg.textContent="🎉 ¡Completaste todas las cuentas!"; nextQuiz.disabled=false;}
+      });
+    });
+    correctas=0; nextQuiz.disabled=true;
+  }
+  resetConta();
+  
+  contaBtn.onclick=()=>{contaModal.style.display='flex'; resetConta();}
+  contaModal.addEventListener('click',e=>{if(e.target===contaModal)contaModal.style.display='none'});
+  
+  nextQuiz.onclick=()=>{
+    document.querySelector("#contaGame").style.display='none';
+    quizConta.style.display='block';
+    startQuiz();
+  };
+  let qi=0;
+  function startQuiz(){
+    if(qi>=QUIZ.length){feedbackConta.textContent="🎓 Finalizaste el quiz. ¡Buen trabajo!";return;}
+    const q=QUIZ[qi]; qConta.textContent=q.q; optsConta.innerHTML=''; feedbackConta.textContent='';
+    q.o.forEach((txt,i)=>{
+      const d=document.createElement('div'); d.className='opt'; d.textContent=txt;
+      d.onclick=()=>{
+        if(i===q.c){d.classList.add('correct');feedbackConta.textContent='✅ Correcto';}
+        else{d.classList.add('wrong');feedbackConta.textContent='❌ Incorrecto';}
+        qi++; setTimeout(startQuiz,800);
+      };
+      optsConta.appendChild(d);
+    });
+  }
+  backConta.onclick=()=>{
+    contaModal.style.display='none';
+    document.querySelector("#contaGame").style.display='block';
+    quizConta.style.display='none';
+    qi=0; resetConta();
+  };
+  </script>
+  
 </html>

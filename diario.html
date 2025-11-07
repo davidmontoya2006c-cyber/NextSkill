@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NextSkill — Diario Contable PRO</title>
+  <style>
+    :root {
+      --bg: #0b1330;
+      --panel: #101b45;
+      --ink: #eaf0ff;
+      --muted: #b9c5ee;
+      --accent: #4aa3ff;
+      --accent2: #2a4dfb;
+      --good: #34d399;
+      --bad: #f87171;
+    }
+    * {
+      box-sizing: border-box;
+      font-family: "Inter", system-ui, Segoe UI, Roboto, sans-serif;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      color: var(--accent);
+    }
+    h2 {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .container {
+      max-width: 950px;
+      margin: 20px auto;
+      padding: 20px;
+      background: var(--panel);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .cuentas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .cuenta {
+      background: var(--accent2);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: grab;
+      user-select: none;
+      transition: 0.2s;
+    }
+    .cuenta:hover {
+      transform: scale(1.05);
+      background: #3b5bf5;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      color: #fff;
+    }
+    th, td {
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background: #1a2b64;
+    }
+    .btn {
+      display: block;
+      margin: 25px auto 10px;
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    #msg {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+    .correcto {
+      color: var(--good);
+    }
+    .incorrecto {
+      color: var(--bad);
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .stat {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      text-align: center;
+      padding: 10px;
+    }
+    .stat h3 {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .stat p {
+      font-weight: 800;
+      font-size: 18px;
+      margin: 5px 0 0;
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      margin: 30px 0;
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <h1>📘 Diario Contable PRO</h1>
+  <h2>Arrastra las cuentas para formar asientos que cuadren Debe = Haber</h2>
+
+  <div class="container" id="zona">
+    <div class="cuentas" id="cuentas"></div>
+
+    <table>
+      <thead>
+        <tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr>
+      </thead>
+      <tbody id="tabla"></tbody>
+    </table>
+
+    <div class="stats">
+      <div class="stat"><h3>Puntaje</h3><p id="puntos">0 XP</p></div>
+      <div class="stat"><h3>Asientos Correctos</h3><p id="asientosOk">0</p></div>
+      <div class="stat"><h3>Nivel</h3><p id="nivel">1</p></div>
+    </div>
+
+    <button class="btn" id="verificar">✅ Verificar Asiento</button>
+    <p id="msg"></p>
+  </div>
+
+  <footer>
+    <a href="index.html">⬅ Volver al inicio</a>
+  </footer>
+
+  <script>
+    const cuentas = [
+      "Caja","Clientes","Proveedores","Banco",
+      "Inventario","Capital","Ventas","Gastos",
+      "Equipo","Publicidad"
+    ];
+    const divC = document.getElementById("cuentas");
+    const tabla = document.getElementById("tabla");
+    const msg = document.getElementById("msg");
+    const puntosEl = document.getElementById("puntos");
+    const nivelEl = document.getElementById("nivel");
+    const okEl = document.getElementById("asientosOk");
+    let seleccion = [], puntos = 0, asientosOk = 0;
+
+    // crear botones de cuentas
+    cuentas.forEach(c => {
+      const d = document.createElement("div");
+      d.className = "cuenta";
+      d.textContent = c;
+      d.draggable = true;
+      d.addEventListener("dragstart", e => e.dataTransfer.setData("text/plain", c));
+      divC.appendChild(d);
+    });
+
+    // arrastrar y soltar
+    const zona = document.getElementById("zona");
+    zona.addEventListener("dragover", e => e.preventDefault());
+    zona.addEventListener("drop", e => {
+      e.preventDefault();
+      const c = e.dataTransfer.getData("text/plain");
+      seleccion.push(c);
+      if (seleccion.length === 2) {
+        agregarAsiento(seleccion[0], seleccion[1]);
+        seleccion = [];
+      }
+    });
+
+    function agregarAsiento(c1, c2) {
+      const tr1 = document.createElement("tr");
+      tr1.innerHTML = `<td>${c1}</td><td>1000</td><td></td>`;
+      const tr2 = document.createElement("tr");
+      tr2.innerHTML = `<td>${c2}</td><td></td><td>1000</td>`;
+      tabla.append(tr1, tr2);
+    }
+
+    document.getElementById("verificar").onclick = () => {
+      let debe = 0, haber = 0;
+      tabla.querySelectorAll("tr").forEach(r => {
+        debe += +r.children[1].textContent || 0;
+        haber += +r.children[2].textContent || 0;
+      });
+      if (debe === haber && debe > 0) {
+        msg.textContent = "🎯 Correcto: Debe = Haber";
+        msg.className = "correcto";
+        puntos += 20; asientosOk++;
+        guardarXP(puntos);
+      } else {
+        msg.textContent = "❌ No cuadra, revisa tus movimientos";
+        msg.className = "incorrecto";
+        puntos = Math.max(0, puntos - 5);
+      }
+      actualizarHUD();
+    };
+
+    function actualizarHUD() {
+      puntosEl.textContent = puntos + " XP";
+      okEl.textContent = asientosOk;
+      const lvl = Math.floor(puntos / 100) + 1;
+      nivelEl.textContent = lvl;
+    }
+
+    function guardarXP(xp) {
+      let data = JSON.parse(localStorage.getItem("NextSkill_XP") || "{}");
+      data.diario = (data.diario || 0) + xp;
+      localStorage.setItem("NextSkill_XP", JSON.stringify(data));
+    }
+  </script>
+</body>
+</html>

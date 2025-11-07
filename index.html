@@ -3,197 +3,163 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NextSkill — Aprende jugando con simuladores EBC</title>
+<title>NextSkill — Aprende jugando con inteligencia artificial</title>
 <style>
 :root{
-  --ink:#0e1730; --muted:#5a6b85; --brand:#0d6efd; --brand2:#2563eb;
-  --bg:#ffffff; --card:#f8faff; --bd:#e5e9f2; --shadow:0 8px 24px rgba(13,110,253,.1);
-  --gold:#b89026;
+  --azul:#2563eb; --azul2:#0b1330; --gris:#f8faff; --texto:#1b2439;
+  --muted:#5a6b85; --gold:#b89026;
 }
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;font-family:'Inter',system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-  color:var(--ink);background:var(--bg);scroll-behavior:smooth;
-}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,Segoe UI,Roboto,sans-serif}
+body{background:#fff;color:var(--texto);scroll-behavior:smooth}
+a{text-decoration:none;color:var(--azul)}
 
-/* Navbar */
-.nav{display:flex;align-items:center;justify-content:space-between;
-  padding:18px 28px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:#fff;z-index:10;box-shadow:var(--shadow)}
-.logo{font-weight:900;font-size:22px;color:var(--brand2);letter-spacing:.3px}
-.nav a{margin-left:14px;font-weight:600;text-decoration:none;color:var(--brand2)}
-.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer;border:none}
-.btn.main{background:var(--brand2);color:#fff;box-shadow:var(--shadow)}
-.btn.ghost{background:transparent;border:1px solid var(--brand2);color:var(--brand2)}
-.btn.main:hover{opacity:.9} .btn.ghost:hover{background:#eff5ff}
+/* NAVBAR */
+.nav{display:flex;justify-content:space-between;align-items:center;
+  padding:18px 40px;position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e9f2;z-index:10}
+.logo{font-weight:900;font-size:22px;color:var(--azul)}
+.nav a{margin-left:20px;font-weight:600;color:var(--azul)}
+.btn{display:inline-block;padding:12px 20px;border-radius:10px;font-weight:700;cursor:pointer;transition:.2s}
+.btn.main{background:var(--azul);color:#fff}
+.btn.main:hover{opacity:.9}
+.btn.ghost{border:2px solid var(--azul);color:var(--azul);background:transparent}
+.btn.ghost:hover{background:#eff4ff}
 
-/* Hero */
-.hero{display:grid;grid-template-columns:1.1fr 1fr;align-items:center;gap:40px;padding:60px 10vw 40px 10vw;}
-.hero h1{font-size:42px;line-height:1.1;margin:0 0 12px;color:var(--ink)}
-.hero p{color:var(--muted);font-size:17px;line-height:1.6;margin-bottom:22px}
-.hero-img{width:100%;height:300px;background:linear-gradient(135deg,#0d6efd20,#2563eb15),
-  url('https://cdn.pixabay.com/photo/2016/11/29/04/08/business-1868652_1280.jpg') center/cover;
-  border-radius:20px;box-shadow:var(--shadow);}
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+/* HERO */
+.hero{display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:40px;
+  padding:60px 10vw;background:linear-gradient(180deg,#f9fbff 0%,#ffffff 100%)}
+.hero h1{font-size:42px;line-height:1.1;margin-bottom:14px;color:var(--texto)}
+.hero p{color:var(--muted);font-size:17px;line-height:1.6;margin-bottom:25px}
+.hero-img{width:100%;height:320px;background:url('https://cdn.pixabay.com/photo/2016/11/29/04/08/business-1868652_1280.jpg') center/cover;border-radius:18px;box-shadow:0 8px 18px rgba(0,0,0,.1)}
+.hero-btn{margin-top:10px}
 
-/* Sección genérica */
-.section{padding:60px 10vw;text-align:center}
-.section h2{font-size:30px;margin-bottom:16px;color:var(--ink)}
-.section p{color:var(--muted);font-size:16px;margin-bottom:32px}
-.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:22px;
-  box-shadow:var(--shadow);transition:all .25s ease}
-.card:hover{transform:translateY(-4px);box-shadow:0 10px 26px rgba(13,110,253,.18)}
-.icon{font-size:38px;margin-bottom:12px;color:var(--brand2)}
-.card h3{margin:0 0 8px;font-size:18px}
-.card p{margin:0;font-size:14px;color:var(--muted)}
+/* SECCIONES */
+.section{padding:70px 10vw;text-align:center}
+.section h2{font-size:30px;margin-bottom:12px;color:var(--texto)}
+.section p{color:var(--muted);font-size:16px;margin-bottom:30px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:26px;margin-top:20px}
+.card{background:var(--gris);padding:24px;border-radius:16px;box-shadow:0 6px 18px rgba(0,0,0,.05);transition:.25s}
+.card:hover{transform:translateY(-4px)}
+.card h3{margin-bottom:8px;color:var(--texto)}
+.card p{color:var(--muted);font-size:15px}
 
-/* Cómo funciona */
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;text-align:left}
-.step{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
-.step h4{margin:6px 0;font-size:17px;color:var(--brand2)}
-.step p{font-size:14px;color:var(--muted)}
+/* STORY */
+.story{padding:80px 10vw;background:#f9fbff;text-align:left;line-height:1.7}
+.story h2{color:var(--azul);margin-bottom:20px;text-align:center}
+.story p{margin-bottom:16px;color:var(--texto);max-width:900px;margin-left:auto;margin-right:auto}
 
-/* NUEVAS SECCIONES */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;text-align:center;margin-top:30px}
-.stat-card{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
-.stat-card h3{color:var(--brand2);margin:8px 0}
-.stat-circle{
-  width:100px;height:100px;margin:0 auto 10px;border-radius:50%;
-  background:conic-gradient(var(--gold) 25%, #f0f0f0 25%);
-  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;color:var(--ink)
-}
-
-/* Footer */
-footer{background:var(--brand2);color:#fff;text-align:center;padding:22px;font-size:14px;margin-top:40px}
+/* FOOTER */
+footer{background:var(--azul2);color:#fff;text-align:center;padding:30px;margin-top:60px}
 footer a{color:#fff;text-decoration:underline}
 </style>
 </head>
 <body>
 
-<!-- Navbar -->
+<!-- NAV -->
 <div class="nav">
   <div class="logo">NextSkill</div>
   <div>
     <a href="#beneficios">Beneficios</a>
     <a href="#juegos">Juegos</a>
     <a href="#como">Cómo funciona</a>
-    <a class="btn main" href="game.html" target="_blank">Jugar ahora</a>
+    <a class="btn main" href="#juegos">🎮 Entrar a los Juegos</a>
   </div>
 </div>
 
-<!-- Hero -->
+<!-- HERO -->
 <section class="hero">
   <div>
-    <h1>Aprende finanzas, contabilidad y negocios jugando</h1>
-    <p>NextSkill transforma las materias de la <b>EBC</b> en experiencias interactivas.  
-       Aprende haciendo, responde desafíos y mejora tus habilidades con simuladores que premian tu progreso.</p>
-    <div class="hero-btns">
-      <a class="btn main" href="game.html" target="_blank">▶️ Iniciar simulador</a>
-      <a class="btn ghost" href="#beneficios">Explorar más</a>
-    </div>
+    <h1>Aprende finanzas y contabilidad jugando</h1>
+    <p>NextSkill transforma las materias de la EBC en experiencias interactivas impulsadas por inteligencia artificial.  
+    Aprende practicando, responde retos y gana puntos como en un videojuego.</p>
+    <a href="#juegos" class="btn main hero-btn">🎯 Entrar a los juegos</a>
   </div>
   <div class="hero-img"></div>
 </section>
 
-<!-- Beneficios -->
+<!-- STORY / PITCH -->
+<section class="story">
+  <h2>Una nueva forma de aprender</h2>
+  <p>¿Alguna vez han sentido que estudiar puede ser agotador?  
+  No por lo difícil del tema, sino porque el método no se adapta a ustedes.</p>
+  <p>En México, casi cuatro de cada diez estudiantes universitarios viven estrés académico constante.  
+  En NextSkill creemos que eso se puede cambiar, porque aprender no debería doler… debería inspirar.</p>
+  <p>NextSkill es una plataforma de aprendizaje con inteligencia artificial que convierte tus materias en microjuegos personalizados.  
+  El sistema aprende de ti: si te cuesta un tema, baja la dificultad; si avanzas rápido, te reta más.</p>
+  <p>La inteligencia artificial analiza tus respuestas y adapta el contenido en tiempo real.  
+  Cada partida te da puntos, niveles y recompensas, pero lo más importante: te mantiene motivado.</p>
+  <p>NextSkill ofrecerá suscripciones accesibles desde $220 pesos al mes para estudiantes de preparatoria y universidad.  
+  Con una inversión de $150,000 pesos desarrollaremos el prototipo con IA generativa y lo probaremos con más de 200 jóvenes.</p>
+  <p>NextSkill no solo enseña: transforma la forma de aprender.  
+  Imagina un mundo donde cada estudiante aprende a su ritmo, sin estrés y con una sonrisa.  
+  Ese es el futuro que queremos construir.  
+  <b>Somos NextSkill — aprende jugando, juega para crecer.</b></p>
+</section>
+
+<!-- BENEFICIOS -->
 <section id="beneficios" class="section">
   <h2>Beneficios de NextSkill</h2>
   <p>Desarrolla competencias clave de forma práctica y divertida.</p>
   <div class="grid3">
-    <div class="card"><div class="icon">🎓</div><h3>Aprendizaje Activo</h3><p>Aprende tomando decisiones reales, no memorizando teorías.</p></div>
-    <div class="card"><div class="icon">💡</div><h3>Refuerzo Práctico</h3><p>Aplica fórmulas, conceptos contables y financieros en escenarios simulados.</p></div>
-    <div class="card"><div class="icon">🏆</div><h3>Progreso Gamificado</h3><p>Gana XP, desbloquea logros y compite sanamente entre compañeros.</p></div>
+    <div class="card"><h3>🎓 Aprendizaje Activo</h3><p>Aprende tomando decisiones reales, no memorizando teorías.</p></div>
+    <div class="card"><h3>💡 Refuerzo Práctico</h3><p>Aplica fórmulas, conceptos contables y financieros en escenarios simulados.</p></div>
+    <div class="card"><h3>🏆 Progreso Gamificado</h3><p>Gana XP, desbloquea logros y compite con tus compañeros.</p></div>
   </div>
 </section>
 
-<!-- Juegos -->
+<!-- JUEGOS -->
 <section id="juegos" class="section">
   <h2>Catálogo de Juegos</h2>
-  <p>Explora experiencias diseñadas para cada licenciatura EBC.</p>
+  <p>Explora experiencias diseñadas para cada módulo financiero y contable.</p>
   <div class="grid3">
-    <div class="card"><h3>Simulador de Inversiones</h3><p>Gestiona portafolios, responde preguntas y equilibra liquidez y apalancamiento.</p></div>
-    <div class="card"><h3>Balance y Flujo</h3><p>Registra operaciones y analiza estados financieros en tiempo real.</p></div>
-    <div class="card"><h3>Casos Express</h3><p>Decide rápido: aplica análisis micro, meso y macro en expansión empresarial.</p></div>
+    <div class="card">
+      <h3>🎯 Balance + Estados Financieros</h3>
+      <p>Analiza activos, pasivos y capital con indicadores, rondas y eventos reales.</p>
+      <a href="game.html" target="_blank" class="btn main">Abrir simulador</a>
+    </div>
+    <div class="card">
+      <h3>📘 Libro Diario</h3>
+      <p>Arrastra y suelta cuentas para crear asientos contables equilibrados.</p>
+      <a href="diario.html" target="_blank" class="btn ghost">Abrir simulador</a>
+    </div>
   </div>
 </section>
 
-<!-- Cómo funciona -->
+<!-- COMO FUNCIONA -->
 <section id="como" class="section">
   <h2>Cómo funciona</h2>
-  <div class="steps">
-    <div class="step"><h4>1️⃣ Inicia el juego</h4><p>Abre el simulador desde el botón “Jugar ahora” y personaliza tus decisiones.</p></div>
-    <div class="step"><h4>2️⃣ Aprende jugando</h4><p>Gestiona tu portafolio, toma préstamos, aplica estrategias y contesta quizzes.</p></div>
-    <div class="step"><h4>3️⃣ Gana experiencia</h4><p>Obtén XP y logros por cada decisión correcta, midiendo tu progreso financiero.</p></div>
+  <div class="grid3">
+    <div class="card"><h3>1️⃣ Inicia el juego</h3><p>Selecciona un simulador y personaliza tus decisiones financieras.</p></div>
+    <div class="card"><h3>2️⃣ Aprende jugando</h3><p>Responde, arrastra, calcula y analiza en tiempo real.</p></div>
+    <div class="card"><h3>3️⃣ Gana experiencia</h3><p>Obtén XP y logros por cada decisión correcta y mejora tu nivel.</p></div>
   </div>
 </section>
 
-<!-- 🔹 NUEVA SECCIÓN 1: Resultados Comprobados -->
+<!-- RESULTADOS -->
 <section class="section" id="resultados">
   <h2>Resultados Comprobados</h2>
   <p><b>Estudio + Diversión + Bienestar = Aprendizaje Sostenible</b></p>
-  <div class="stats">
-    <div class="stat-card">
-      <div class="stat-circle">25%</div>
-      <h3>Mejor Concentración</h3>
-      <p>Con pausas activas estratégicas.<br><i>Fuente: PubMed (2024)</i></p>
-    </div>
-    <div class="stat-card">
-      <h3>Motivación Elevada</h3>
-      <p>Equilibrio emocional y resultados medibles en tiempo real.</p>
-    </div>
-    <div class="stat-card">
-      <h3>Aprendizaje Sostenible</h3>
-      <p>Basado en evidencia: pausas activas mejoran 25 % la concentración.</p>
-    </div>
-  </div>
-</section>
-
-<!-- 🔹 NUEVA SECCIÓN 2: Oportunidad de Expansión -->
-<section class="section" id="expansion">
-  <h2>Oportunidad de expansión</h2>
   <div class="grid3">
-    <div class="card" style="border-left:6px solid var(--gold)">
-      <h3>10M+ Estudiantes</h3>
-      <p>Mexicanos de 15–25 años bajo presión académica constante.<br><i>SEP (2024)</i></p>
-    </div>
-    <div class="card" style="border-left:6px solid var(--gold)">
-      <h3>+60 % Crecimiento</h3>
-      <p>EdTech en Latinoamérica expande aceleradamente.<br><i>OECD (2023)</i></p>
-    </div>
-    <div class="card" style="border-left:6px solid var(--gold)">
-      <h3>Tres Tendencias, Una Solución</h3>
-      <p>Educación Digital · IA · Bienestar Mental</p>
-    </div>
+    <div class="card"><h3>25%</h3><p><b>Mejor Concentración</b><br>Con pausas activas estratégicas.<br><i>Fuente: PubMed (2024)</i></p></div>
+    <div class="card"><h3>🚀 Motivación Elevada</h3><p>Equilibrio emocional y resultados medibles en tiempo real.</p></div>
+    <div class="card"><h3>🌱 Aprendizaje Sostenible</h3><p>Basado en evidencia: pausas activas mejoran 25 % la concentración.</p></div>
   </div>
 </section>
 
-<!-- 🔹 NUEVA SECCIÓN 3: NextSkill Lista para Escalar -->
-<section class="section" id="escalar">
-  <h2>NextSkill — Lista para Escalar</h2>
-  <div class="grid3">
-    <div class="card" style="border-left:6px solid var(--gold)">
-      <h3>Problema Real</h3>
-      <p>70 % de estudiantes con estrés académico.</p>
-    </div>
-    <div class="card" style="border-left:6px solid var(--gold)">
-      <h3>Solución Innovadora</h3>
-      <p>IA + Gamificación + Bienestar mental.</p>
-    </div>
-    <div class="card" style="border-left:6px solid var(--gold)">
-      <h3>Mercado Enorme</h3>
-      <p>10 M+ usuarios potenciales en México.</p>
-    </div>
-  </div>
-  <p style="margin-top:16px;color:var(--muted)">Aprender sin agotarse. El futuro de la educación está aquí.</p>
-</section>
-
-<!-- Footer -->
 <footer>
-  © 2025 NextSkill — Proyecto académico para estudiantes EBC · 
-  <a href="game.html" target="_blank">Abrir simulador</a>
+  © 2025 NextSkill — Proyecto académico EBC · 
+  <a href="game.html" target="_blank">Abrir simulador principal</a>
 </footer>
 
 </body>
 </html>
+
+
+
+
+
+
+  
+
+
+
 
