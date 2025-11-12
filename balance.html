@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextSkill — Juego de Contabilidad</title>
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f2f6ff;
+  margin: 0;
+  padding: 0;
+  color: #1a2440;
+}
+header {
+  text-align: center;
+  background: #3056d3;
+  color: white;
+  padding: 25px 15px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+h1 { margin: 0; font-size: 26px; }
+#game {
+  max-width: 600px;
+  background: white;
+  margin: 40px auto;
+  padding: 30px 20px;
+  border-radius: 14px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+}
+#question {
+  font-size: 20px;
+  margin-bottom: 18px;
+  font-weight: 600;
+}
+.option {
+  background: #f5f7ff;
+  border: 2px solid #e0e5fa;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 8px 0;
+  cursor: pointer;
+  transition: 0.25s;
+}
+.option:hover {
+  background: #eaf0ff;
+  border-color: #3056d3;
+}
+.correct {
+  background: #d1fae5;
+  border-color: #10b981;
+}
+.wrong {
+  background: #fee2e2;
+  border-color: #ef4444;
+}
+#next {
+  background: #3056d3;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  margin-top: 16px;
+  cursor: pointer;
+  font-weight: 600;
+}
+#next:hover {
+  background: #2443b8;
+}
+#score {
+  text-align: right;
+  color: #3056d3;
+  font-weight: 600;
+  margin-top: 10px;
+}
+#progress {
+  height: 10px;
+  background: #e0e5fa;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 20px;
+}
+#bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg,#3056d3,#60a5fa);
+  transition: width 0.4s ease;
+}
+.message {
+  text-align: center;
+  font-weight: 600;
+  margin-top: 10px;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>📘 Juego de Contabilidad</h1>
+  <p>Refuerza tus conocimientos de balance y estados financieros.</p>
+</header>
+
+<div id="game">
+  <div id="question">Cargando pregunta...</div>
+  <div id="options"></div>
+  <div id="progress"><div id="bar"></div></div>
+  <div class="message" id="message"></div>
+  <div id="score">Puntaje: 0</div>
+  <button id="next">Siguiente</button>
+</div>
+
+<script>
+const preguntas = [
+  {q:"¿Qué muestra el Balance General?", o:["Ingresos y egresos","Activos, pasivos y capital","Flujo de efectivo"], a:1},
+  {q:"¿Qué documento refleja el resultado de las operaciones?", o:["Estado de resultados","Balance general","Estado de flujo de efectivo"], a:0},
+  {q:"¿Qué representa el capital contable?", o:["Deudas con proveedores","Aportaciones y utilidades acumuladas","Caja y bancos"], a:1},
+  {q:"Si los activos son $200,000 y los pasivos $80,000, el capital es…", o:["$280,000","$120,000","$80,000"], a:1},
+  {q:"¿Qué elemento no pertenece al activo?", o:["Inventarios","Cuentas por cobrar","Proveedores"], a:2},
+  {q:"El estado que muestra los movimientos de dinero se llama…", o:["Estado de flujo de efectivo","Estado de resultados","Balance general"], a:0},
+  {q:"Si el pasivo aumenta, ¿qué ocurre con el capital?", o:["Aumenta","Disminuye","No cambia necesariamente"], a:2}
+];
+
+let index = 0, score = 0;
+const qEl = document.getElementById('question');
+const oEl = document.getElementById('options');
+const sEl = document.getElementById('score');
+const next = document.getElementById('next');
+const bar = document.getElementById('bar');
+const msg = document.getElementById('message');
+
+function cargarPregunta(){
+  const p = preguntas[index];
+  qEl.textContent = p.q;
+  oEl.innerHTML = '';
+  msg.textContent = '';
+  p.o.forEach((txt, i)=>{
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.textContent = txt;
+    div.onclick = ()=>verificar(i, div);
+    oEl.appendChild(div);
+  });
+  actualizarProgreso();
+}
+function verificar(i, el){
+  const p = preguntas[index];
+  const opciones = document.querySelectorAll('.option');
+  opciones.forEach(op=>op.onclick=null);
+  if(i===p.a){
+    el.classList.add('correct');
+    msg.textContent = '✅ ¡Excelente!';
+    msg.style.color = '#10b981';
+    score += 10;
+  } else {
+    el.classList.add('wrong');
+    msg.textContent = '❌ Respuesta incorrecta';
+    msg.style.color = '#ef4444';
+  }
+  sEl.textContent = 'Puntaje: '+score;
+}
+next.onclick = ()=>{
+  index++;
+  if(index < preguntas.length){
+    cargarPregunta();
+  } else {
+    qEl.textContent = "🎉 ¡Juego completado!";
+    oEl.innerHTML = "<p>Tu puntaje final fue <b>"+score+"</b> puntos.</p>";
+    msg.textContent = "";
+    next.style.display = 'none';
+    bar.style.width = '100%';
+  }
+}
+function actualizarProgreso(){
+  const progreso = ((index) / preguntas.length) * 100;
+  bar.style.width = progreso + '%';
+}
+cargarPregunta();
+</script>
+</body>
+</html>
+
