@@ -1,813 +1,771 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>📊 Balance General Arcade — Juego de Contabilidad</title>
-  <style>
-    /* =========================================================
-       BALANCE GENERAL ARCADE — ESTILOS PRINCIPALES
-       Autor: NEXTSKILL for David
-       Descripción: Juego arcade educativo de contabilidad
-       Secciones: Layout, Paneles, Botones, Drag&Drop, Modales
-       ========================================================= */
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>📊 Balance General Arcade — NextSkill</title>
+<style>
+:root{
+  --bg:#050816;
+  --panel:#0b1026;
+  --panel2:#111936;
+  --glass:#141b3a;
+  --bd:rgba(255,255,255,.14);
+  --ink:#eef2ff;
+  --muted:#9ca6e5;
+  --accent:#7c9cff;
+  --accent2:#9ad1ff;
+  --good:#34d399;
+  --bad:#f87171;
+  --warn:#facc15;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Inter",system-ui,Segoe UI,Roboto,sans-serif}
+body{
+  background:
+    radial-gradient(900px 600px at 0% 0%, #1a237e 0%, transparent 60%),
+    radial-gradient(900px 600px at 120% 0%, #0f172a 0%, transparent 60%),
+    linear-gradient(#020617,#020617);
+  color:var(--ink);
+}
+.app{min-height:100vh;padding:18px;display:grid;grid-template-rows:auto auto 1fr auto;gap:16px}
 
-    :root{
-      --bg:#0b0f23; 
-      --panel:#0f1634; 
-      --panel-2:#111a42; 
-      --ink:#eef1ff; 
-      --muted:#aab3df; 
-      --accent:#7c9cff; 
-      --accent-2:#9ad1ff;
-      --good:#34D399; 
-      --warn:#FBBF24; 
-      --bad:#F87171; 
-      --chip:#1c265a; 
-      --chip-ink:#d8dcff;
-      --grid:rgba(255,255,255,.05);
-      --shadow:0 10px 30px rgba(0,0,0,.35);
-      --shadow-soft:0 6px 18px rgba(0,0,0,.25);
-      --glass:rgba(255,255,255,.06);
-      --glass-bd:rgba(255,255,255,.12);
-    }
+/* HEADER */
+header{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#7c9cff,#9ad1ff);display:grid;place-items:center;font-weight:900;color:#020617;box-shadow:0 8px 24px rgba(15,23,42,.6)}
+.title h1{margin:0;font-size:clamp(18px,2.6vw,26px)}
+.title small{color:var(--muted);font-size:13px}
+.top-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+  border:none;border-radius:12px;padding:9px 14px;font-weight:700;cursor:pointer;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#020617;
+  box-shadow:0 8px 24px rgba(15,23,42,.7);transition:.15s transform,.15s box-shadow;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(15,23,42,.9)}
+.btn:active{transform:translateY(0);box-shadow:0 6px 18px rgba(15,23,42,.7)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--bd);box-shadow:none}
+.btn.alt{background:linear-gradient(135deg,#fbbf24,#f97316);color:#111827}
 
-    html,body{height:100%;}
-    body{
-      margin:0; background: radial-gradient(1200px 600px at 20% -10%, #152158 0%, transparent 60%),
-                                   radial-gradient(900px 600px at 120% 20%, #0e1746 0%, transparent 60%),
-                                   linear-gradient(180deg, #0b0f23, #0b0f23);
-      color:var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, Inter, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; 
-      overflow-x:hidden;
-    }
+/* HUD */
+.hud{display:grid;grid-template-columns:2fr 1fr 1fr;gap:14px}
+.panel{
+  background:var(--panel);border-radius:16px;padding:12px;border:1px solid var(--bd);
+  box-shadow:0 6px 18px rgba(15,23,42,.7);
+}
+.score-row{display:flex;flex-wrap:wrap;gap:8px}
+.tag{
+  padding:7px 10px;border-radius:999px;border:1px solid var(--bd);
+  background:var(--glass);font-size:12px;display:flex;align-items:center;gap:7px;
+}
+.dot{width:8px;height:8px;border-radius:999px;background:#4ade80}
+.tag strong{font-size:13px}
+.progress-wrap{display:flex;align-items:center;gap:10px}
+.progress{flex:1;height:9px;border-radius:999px;background:#020617;border:1px solid var(--bd);overflow:hidden}
+.progress span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#7c9cff,#22c55e)}
+#timeleft{font-variant-numeric:tabular-nums}
+.lives{display:flex;gap:5px}
+.life{
+  width:18px;height:18px;border-radius:6px;
+  background:radial-gradient(circle at 30% 25%,#fecaca 0,#f97373 35%,#b91c1c 70%);
+  border:1px solid rgba(248,113,113,.9);
+}
+.life.out{background:#111827;border-color:#4b5563;opacity:.5}
 
-    .app{
-      display:grid; grid-template-rows:auto auto 1fr auto; min-height:100dvh; gap:16px; padding:18px; 
-      background-image: linear-gradient(transparent 0,transparent calc(100% - 140px), rgba(255,255,255,.02) calc(100% - 140px), rgba(255,255,255,.02) 100%);
-    }
+/* MAIN LAYOUT */
+.main{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+.board{
+  background:var(--panel2);border-radius:18px;padding:14px;border:1px solid var(--bd);
+  display:grid;grid-template-rows:auto auto 1fr;gap:10px;
+}
+.board-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.badge{padding:4px 10px;border-radius:999px;font-size:12px;border:1px solid var(--bd);color:var(--muted)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dropzone{
+  background:#020617;border-radius:14px;border:2px dashed rgba(148,163,184,.5);
+  padding:10px;display:flex;flex-direction:column;gap:8px;min-height:120px;
+  transition:.15s border-color,.15s background;
+}
+.dropzone.active{border-color:#38bdf8;background:rgba(56,189,248,.06)}
+.zone-head{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);font-weight:600}
+.zone-total{font-variant-numeric:tabular-nums}
+.bank-title{font-size:13px;color:var(--muted);margin-top:2px}
+.bank{
+  margin-top:4px;background:#020617;border-radius:12px;border:1px solid var(--bd);
+  padding:8px;display:flex;flex-wrap:wrap;gap:8px;max-height:220px;overflow:auto;
+}
+.card-item{
+  background:var(--glass);border-radius:12px;border:1px solid var(--bd);
+  padding:8px 9px;min-width:180px;max-width:220px;cursor:grab;
+  box-shadow:0 6px 16px rgba(15,23,42,.8);transition:.15s transform,.15s box-shadow;
+}
+.card-item:active{cursor:grabbing}
+.card-item:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(15,23,42,1)}
+.card-item h4{margin:0;font-size:13px}
+.card-meta{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);margin-top:4px}
+.card-amt{font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
 
-    header{
-      display:flex; align-items:center; justify-content:space-between; gap:16px;
-    }
-    .brand{
-      display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--ink);
-    }
-    .logo{
-      width:42px; height:42px; border-radius:14px; background:linear-gradient(135deg, #6fa3ff, #9ad1ff); 
-      box-shadow:var(--shadow-soft); display:grid; place-items:center; font-weight:800; color:#0b0f23;
-    }
-    .title h1{margin:0; font-size:clamp(18px, 2.6vw, 28px);} 
-    .title small{color:var(--muted);}    
+/* RIGHT SIDE: QUIZ */
+.side{display:grid;grid-template-rows:1.4fr auto;gap:12px}
+.quiz{
+  background:var(--panel2);border-radius:16px;border:1px solid var(--bd);
+  padding:12px;display:grid;gap:10px;
+}
+.quiz h3{margin:0;font-size:16px}
+.quiz-question{font-size:14px;color:#e5e7eb;min-height:40px}
+.options{display:grid;gap:7px}
+.option{
+  background:var(--glass);border-radius:12px;border:1px solid var(--bd);
+  padding:8px 10px;font-size:13px;display:flex;justify-content:space-between;align-items:center;
+  cursor:pointer;transition:.15s transform,.15s background,.15s border-color;
+}
+.option span:last-child{opacity:.7;font-size:11px}
+.option:hover{transform:translateY(-1px);background:#020617}
+.option.selected{border-color:#38bdf8;background:rgba(56,189,248,.08)}
+.option.correct{border-color:var(--good);background:rgba(34,197,94,.1)}
+.option.wrong{border-color:var(--bad);background:rgba(248,113,113,.1)}
+.quiz-actions{display:flex;gap:8px;flex-wrap:wrap}
+.feedback{min-height:20px;font-size:12px}
+.feedback.good{color:var(--good)}
+.feedback.bad{color:var(--bad)}
 
-    .top-actions{display:flex; gap:10px; flex-wrap:wrap}
-    .btn{
-      appearance:none; cursor:pointer; user-select:none; border:none; border-radius:12px; padding:10px 14px; font-weight:700; 
-      color:#0b0f23; background:linear-gradient(135deg, var(--accent), var(--accent-2));
-      box-shadow:var(--shadow-soft); transition:.15s transform ease, .2s box-shadow ease;
-    }
-    .btn:hover{transform:translateY(-1px); box-shadow:var(--shadow)}
-    .btn:active{transform:translateY(0)}
-    .btn.alt{background:linear-gradient(135deg, #ffb86b, #ffd38c)}
-    .btn.ghost{background:transparent; color:var(--ink); outline:1px solid var(--glass-bd)}
+.stats{
+  background:var(--panel2);border-radius:16px;border:1px solid var(--bd);
+  padding:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+}
+.pill{padding:5px 9px;border-radius:999px;font-size:12px;border:1px solid var(--bd)}
+.pill.good{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.6);color:var(--good)}
+.pill.bad{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.6);color:var(--bad)}
+.kbd{padding:2px 7px;border-radius:7px;font-size:11px;border:1px solid #4b5563;background:#020617;color:#e5e7eb}
 
-    .hud{
-      display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:stretch;
-    }
-    .panel{
-      background:var(--panel); border:1px solid var(--glass-bd); border-radius:18px; padding:14px; box-shadow:var(--shadow-soft);
-    }
-    .scoreboard{display:flex; gap:12px; align-items:center; justify-content:flex-start; flex-wrap:wrap}
-    .tag{background:var(--chip); color:var(--chip-ink); border:1px solid var(--glass-bd); padding:8px 10px; border-radius:999px; font-weight:700; display:flex; align-items:center; gap:8px}
-    .tag .dot{width:9px; height:9px; background:var(--accent-2); border-radius:50%}
+footer{font-size:11px;color:var(--muted);text-align:center;margin-top:4px}
 
-    .progress-wrap{display:flex; align-items:center; gap:12px}
-    .progress{flex:1; height:10px; background:var(--glass); border-radius:999px; overflow:hidden; outline:1px solid var(--glass-bd)}
-    .progress > i{display:block; height:100%; width:0%; background:linear-gradient(90deg, #7c9cff, #9ad1ff)}
+/* TOAST */
+.toast{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  background:#020617;border-radius:999px;border:1px solid var(--bd);
+  padding:6px 14px;font-size:12px;display:none;align-items:center;gap:8px;
+  box-shadow:0 10px 30px rgba(15,23,42,1);z-index:50;
+}
+.toast.show{display:flex}
 
-    .lives{display:flex; gap:4px}
-    .life{
-      width:20px; height:20px; border-radius:6px; background:linear-gradient(135deg, #ee7a7a, #f87171); border:1px solid rgba(255,255,255,.25);
-      box-shadow: inset 0 0 10px rgba(0,0,0,.35);
-    }
-    .life.out{background:linear-gradient(135deg, #2b2b2b, #3f3f3f); opacity:.5}
-
-    .game{
-      display:grid; grid-template-columns:1.1fr .9fr; gap:16px;
-    }
-
-    .board{min-height:460px; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02)); border:1px dashed var(--glass-bd); border-radius:18px; padding:14px; display:grid; grid-template-rows:auto auto 1fr; gap:10px}
-    .board h2{margin:0 0 6px 0}
-    .grid3{display:grid; grid-template-columns: repeat(3, 1fr); gap:10px}
-    .dropzone{
-      background:var(--panel-2); border:2px dashed rgba(255,255,255,.16); border-radius:14px; padding:10px; min-height:120px; display:flex; flex-direction:column; gap:10px; transition: .15s ease border-color, .15s ease background;
-    }
-    .dropzone.active{border-color: var(--accent-2); background: rgba(154,209,255,.08)}
-    .zone-title{display:flex; align-items:center; justify-content:space-between; gap:6px; color:var(--muted); font-weight:700}
-    .zone-total{font-variant-numeric:tabular-nums}
-
-    .bank{background:var(--panel); border:1px solid var(--glass-bd); border-radius:14px; padding:10px; display:flex; flex-wrap:wrap; gap:10px; max-height:300px; overflow:auto}
-    .card{
-      background:var(--chip); border:1px solid var(--glass-bd); color:var(--chip-ink); padding:10px; border-radius:12px; display:flex; flex-direction:column; gap:6px; width:min(240px, 100%); cursor:grab; box-shadow:var(--shadow-soft); transition:.15s transform ease, .25s box-shadow ease;
-    }
-    .card:active{cursor:grabbing}
-    .card:hover{transform: translateY(-2px); box-shadow:var(--shadow)}
-    .card h4{margin:0; font-size:14px}
-    .chip-row{display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:12px; color:var(--muted)}
-    .amt{font-variant-numeric: tabular-nums; color:var(--ink); font-weight:800}
-
-    .right{
-      display:grid; grid-template-rows:auto 1fr; gap:16px
-    }
-
-    .question{
-      background:var(--panel); border:1px solid var(--glass-bd); border-radius:18px; padding:14px; display:grid; gap:10px
-    }
-    .question h3{margin:0}
-    .options{display:grid; gap:8px}
-    .option{
-      background:var(--chip); border:1px solid var(--glass-bd); color:var(--chip-ink); border-radius:12px; padding:10px; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:12px; transition:.15s ease transform, .2s ease background;
-    }
-    .option:hover{transform: translateY(-1px)}
-    .option.correct{outline:2px solid var(--good); background:rgba(52,211,153,.1)}
-    .option.wrong{outline:2px solid var(--bad); background:rgba(248,113,113,.1)}
-
-    .actions{display:flex; gap:10px; flex-wrap:wrap}
-
-    .footer{
-      display:flex; gap:12px; justify-content:space-between; align-items:center; flex-wrap:wrap
-    }
-    .kbd{background:#111929; color:#d0d6ff; border:1px solid #263157; padding:2px 8px; border-radius:8px; font-weight:800}
-
-    .pill{padding:6px 10px; border-radius:999px; font-size:12px; font-weight:800}
-    .pill.good{background:rgba(52,211,153,.1); color:var(--good); border:1px solid rgba(52,211,153,.35)}
-    .pill.bad{background:rgba(248,113,113,.1); color:var(--bad); border:1px solid rgba(248,113,113,.35)}
-
-    /* === Modal / Instrucciones === */
-    dialog{ 
-      border:none; border-radius:18px; padding:0; width:min(920px, 92vw); background:linear-gradient(180deg, #101538, #0e1534); color:var(--ink);
-      box-shadow: var(--shadow);
-    }
-    .modal{
-      padding:18px; display:grid; gap:14px;
-    }
-    .modal header{justify-content:flex-start}
-    .modal h2{margin:0}
-    .modal .grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-    .callout{background:var(--chip); border:1px solid var(--glass-bd); border-radius:14px; padding:12px}
-
-    /* Scrollbars */
-    *{scrollbar-width:thin; scrollbar-color: #3a4f9c transparent}
-    *::-webkit-scrollbar{height:10px; width:10px}
-    *::-webkit-scrollbar-thumb{background:#3a4f9c; border-radius:999px}
-    *::-webkit-scrollbar-track{background:transparent}
-
-    /* Responsive */
-    @media (max-width: 980px){
-      .game{grid-template-columns:1fr}
-      .hud{grid-template-columns:1fr}
-      .modal .grid{grid-template-columns:1fr}
-    }
-  </style>
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hud{grid-template-columns:1fr}
+  .main{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <a href="#" class="brand" aria-label="Inicio">
-        <div class="logo" aria-hidden="true">BG</div>
-        <div class="title">
-          <h1>Balance General Arcade</h1>
-          <small>Aprende Activos, Pasivos y Capital con retos arcade 🕹️</small>
-        </div>
-      </a>
-      <div class="top-actions">
-        <button class="btn" id="btnStart">▶ Iniciar</button>
-        <button class="btn alt" id="btnPractice">📚 Práctica</button>
-        <button class="btn ghost" id="btnHow">❓ Instrucciones</button>
+<div class="app">
+  <!-- HEADER -->
+  <header>
+    <a href="#" class="brand">
+      <div class="logo">BG</div>
+      <div class="title">
+        <h1>Balance General Arcade</h1>
+        <small>Arrastra partidas a Activo, Pasivo y Capital. A = P + C 🧠</small>
       </div>
-    </header>
+    </a>
+    <div class="top-actions">
+      <button class="btn" id="btnStart">▶ Iniciar juego</button>
+      <button class="btn alt" id="btnPractice">🎓 Modo práctica</button>
+      <button class="btn ghost" id="btnHelp">❔ Ayuda rápida</button>
+    </div>
+  </header>
 
-    <section class="hud">
-      <div class="panel">
-        <div class="scoreboard">
-          <span class="tag" title="Puntuación actual"><span class="dot"></span> Puntos: <strong id="score">0</strong></span>
-          <span class="tag" title="Nivel"><span class="dot" style="background:#ffd38c"></span> Nivel: <strong id="level">1</strong></span>
-          <span class="tag" title="Racha de aciertos"><span class="dot" style="background:#34D399"></span> Racha: <strong id="streak">0</strong></span>
-          <span class="tag" title="Mejor Puntaje"><span class="dot" style="background:#9ad1ff"></span> Récord: <strong id="best">0</strong></span>
+  <!-- HUD -->
+  <section class="hud">
+    <div class="panel">
+      <div class="score-row">
+        <div class="tag"><span class="dot"></span> Puntos: <strong id="score">0</strong></div>
+        <div class="tag"><span class="dot" style="background:#fbbf24"></span> Racha: <strong id="streak">0</strong></div>
+        <div class="tag"><span class="dot" style="background:#22c55e"></span> Ronda: <strong id="round">1</strong>/10</div>
+        <div class="tag"><span class="dot" style="background:#38bdf8"></span> Récord: <strong id="best">0</strong></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="progress-wrap">
+        <strong style="font-size:13px">Tiempo</strong>
+        <div class="progress"><span id="timebar"></span></div>
+        <strong id="timeleft">60</strong>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="lives" id="lives"></div>
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <section class="main">
+    <!-- TABLERO -->
+    <section class="board" aria-label="Tablero de balance general">
+      <div class="board-top">
+        <h2 style="font-size:17px">Clasifica las partidas</h2>
+        <span class="badge" id="modeTag">Modo: Arcade</span>
+      </div>
+
+      <div class="grid3" id="zones">
+        <div class="dropzone" data-zone="activo">
+          <div class="zone-head">
+            <span>Activo (A)</span>
+            <span class="zone-total" id="sum-activo">$0</span>
+          </div>
+          <div class="zone-list"></div>
+        </div>
+        <div class="dropzone" data-zone="pasivo">
+          <div class="zone-head">
+            <span>Pasivo (P)</span>
+            <span class="zone-total" id="sum-pasivo">$0</span>
+          </div>
+          <div class="zone-list"></div>
+        </div>
+        <div class="dropzone" data-zone="capital">
+          <div class="zone-head">
+            <span>Capital (C)</span>
+            <span class="zone-total" id="sum-capital">$0</span>
+          </div>
+          <div class="zone-list"></div>
         </div>
       </div>
-      <div class="panel">
-        <div class="progress-wrap">
-          <strong>Tiempo</strong>
-          <div class="progress" aria-hidden="true"><i id="timebar"></i></div>
-          <strong id="timeleft">00</strong>
-        </div>
-      </div>
-      <div class="panel" aria-label="Vidas">
-        <div class="lives" id="lives"></div>
+
+      <div>
+        <div class="bank-title">Banco de partidas (arrastra a la columna correcta)</div>
+        <div class="bank" id="bank"></div>
       </div>
     </section>
 
-    <main class="game">
-      <section class="board panel" aria-label="Tablero">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:8px">
-          <h2 id="modeTitle">Modo: Clasificación Drag & Drop</h2>
-          <span class="pill" id="modeBadge">Ronda 1/10</span>
+    <!-- LADO DERECHO -->
+    <aside class="side">
+      <section class="quiz">
+        <h3>Pregunta rápida</h3>
+        <div class="quiz-question" id="qText">
+          ¿En qué grupo se clasifica “Caja y Bancos”?
         </div>
-        <div class="grid3" id="zones">
-          <div class="dropzone" data-zone="activo">
-            <div class="zone-title"><span>Activo (A)</span> <span class="zone-total" id="sum-activo">$0</span></div>
-            <div class="zone-list" aria-live="polite"></div>
-          </div>
-          <div class="dropzone" data-zone="pasivo">
-            <div class="zone-title"><span>Pasivo (P)</span> <span class="zone-total" id="sum-pasivo">$0</span></div>
-            <div class="zone-list" aria-live="polite"></div>
-          </div>
-          <div class="dropzone" data-zone="capital">
-            <div class="zone-title"><span>Capital (C)</span> <span class="zone-total" id="sum-capital">$0</span></div>
-            <div class="zone-list" aria-live="polite"></div>
-          </div>
+        <div class="options" id="qOptions"></div>
+        <div class="quiz-actions">
+          <button class="btn" id="btnCheck">Comprobar</button>
+          <button class="btn ghost" id="btnSkip">Saltar</button>
         </div>
-        <h3 style="margin:8px 0 0 0">Banco de partidas</h3>
-        <div class="bank" id="bank" aria-label="Partidas para arrastrar"></div>
+        <div class="feedback" id="qFeedback"></div>
       </section>
 
-      <aside class="right">
-        <section class="question">
-          <h3>Pregunta Rápida</h3>
-          <div id="questionText">Una deuda bancaria a 5 años pertenece a…</div>
-          <div class="options" id="options"></div>
-          <div class="actions">
-            <button class="btn" id="btnCheck">Comprobar</button>
-            <button class="btn ghost" id="btnSkip">Saltar</button>
-          </div>
-          <div id="qFeedback"></div>
-        </section>
-        <section class="panel">
-          <div class="footer">
-            <div>
-              <span class="pill good">Aciertos: <b id="hits">0</b></span>
-              <span class="pill bad">Errores: <b id="fails">0</b></span>
-            </div>
-            <div>
-              <span class="kbd">R</span> Reiniciar &nbsp;|&nbsp; <span class="kbd">H</span> Ayuda &nbsp;|&nbsp; <span class="kbd">M</span> Cambiar modo
-            </div>
-          </div>
-        </section>
-      </aside>
-    </main>
-
-    <footer style="opacity:.8; font-size:12px; text-align:center">Hecho para practicar Balance General (A = P + C). Guarda progreso localmente. © 2025</footer>
-  </div>
-
-  <!-- ===== INSTRUCCIONES / MODAL ===== -->
-  <dialog id="dlgHow">
-    <div class="modal">
-      <header>
-        <div class="logo" aria-hidden="true">BG</div>
+      <section class="stats">
         <div>
-          <h2>Cómo jugar — Balance General Arcade</h2>
-          <small>Objetivo: completar retos y mantener el balance A = P + C</small>
+          <span class="pill good">Aciertos: <b id="hits">0</b></span>
+          <span class="pill bad">Errores: <b id="fails">0</b></span>
         </div>
-      </header>
-      <div class="grid">
-        <div class="callout">
-          <h3>🎯 Modos de juego</h3>
-          <ul>
-            <li><b>Clasificación (Drag & Drop):</b> Arrastra partidas al bloque correcto (Activo, Pasivo, Capital). Suma de cada bloque se calcula en tiempo real.</li>
-            <li><b>Constructor del Balance:</b> Recibe transacciones. Elige dónde afectan y con qué signo hasta cuadrar <i>A = P + C</i>.</li>
-            <li><b>Reto Relámpago:</b> Preguntas de opción múltiple con temporizador. Racha = bonificación.</li>
-          </ul>
+        <div style="font-size:11px;color:var(--muted)">
+          <span class="kbd">R</span> Reiniciar ·
+          <span class="kbd">H</span> Ayuda ·
+          <span class="kbd">Q</span> Nueva pregunta
         </div>
-        <div class="callout">
-          <h3>⌨️ Controles</h3>
-          <ul>
-            <li><span class="kbd">R</span> Reiniciar nivel</li>
-            <li><span class="kbd">M</span> Cambiar modo</li>
-            <li><span class="kbd">H</span> Abrir esta ayuda</li>
-            <li>Arrastra tarjetas desde el banco hacia las zonas de A, P o C</li>
-          </ul>
-        </div>
-        <div class="callout">
-          <h3>🏆 Puntuación & Vidas</h3>
-          <ul>
-            <li>Acierto +10, Racha +5 extra cada 3 aciertos.</li>
-            <li>Error −5 y pierdes una vida. 3 vidas por nivel.</li>
-            <li>Completa 10 rondas para subir de nivel (más ítems, menos tiempo).</li>
-          </ul>
-        </div>
-        <div class="callout">
-          <h3>💾 Progreso</h3>
-          <ul>
-            <li>Se guarda automáticamente (puntos y récord) en tu navegador.</li>
-            <li>Modo Práctica no resta vidas ni tiene tiempo.</li>
-          </ul>
-        </div>
-      </div>
-      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:6px">
-        <button class="btn ghost" id="btnCloseHow">Cerrar</button>
-        <button class="btn" id="btnStartFromHow">Jugar ahora</button>
-      </div>
-    </div>
-  </dialog>
+      </section>
+    </aside>
+  </section>
 
-  <!-- ===== SONIDOS (WebAudio) ===== -->
-  <script>
-  // =========================================================
-  // Audio minimalista con WebAudio API (sin archivos externos)
-  // =========================================================
-  const AudioFX = (()=>{
-    let ctx;
-    const ensure = ()=>{ if(!ctx){ ctx = new (window.AudioContext || window.webkitAudioContext)(); } return ctx };
-    const play = (type='sine', freq=440, dur=0.08, vol=0.05, when=0)=>{
-      const c = ensure();
-      const o = c.createOscillator();
-      const g = c.createGain();
-      o.type = type; o.frequency.value = freq;
-      g.gain.value = vol; o.connect(g); g.connect(c.destination);
-      const t = c.currentTime + when;
-      o.start(t); o.stop(t + dur);
-      // pequeño fade
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(vol, t + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    };
-    return {
-      ok:()=>{ play('triangle', 660, 0.09, 0.06); play('triangle', 990, 0.07, 0.05, 0.05) },
-      bad:()=>{ play('sawtooth', 160, 0.12, 0.06); },
-      tick:()=>{ play('sine', 880, 0.03, 0.03) },
-      level:()=>{ play('square', 320, 0.09, 0.06); play('square', 640, 0.09, 0.05, 0.05); play('square', 960, 0.09, 0.04, 0.10) }
-    }
-  })();
-  </script>
+  <footer>Hecho con NextSkill — Practica la fórmula A = P + C de forma interactiva · © 2025</footer>
+</div>
 
-  <!-- ===== LÓGICA DEL JUEGO ===== -->
-  <script>
-  // =========================================================
-  // BALANCE GENERAL ARCADE — LÓGICA PRINCIPAL
-  // Autor: NEXTSKILL (2025)
-  // =========================================================
+<!-- TOAST -->
+<div class="toast" id="toast"><span>💡</span><span id="toastMsg"></span></div>
 
-  const $ = sel => document.querySelector(sel);
-  const $$ = sel => Array.from(document.querySelectorAll(sel));
+<script>
+/* ===============================
+   UTILIDADES
+   =============================== */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const fmt = n => {
+  const sign = n < 0 ? "-" : "";
+  return sign + "$" + Math.abs(n).toLocaleString("es-MX");
+};
+function showToast(msg){
+  const t = $("#toast"), m=$("#toastMsg");
+  m.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 1500);
+}
 
-  const ui = {
-    score: $('#score'), level: $('#level'), streak: $('#streak'), best: $('#best'),
-    timebar: $('#timebar'), timeleft: $('#timeleft'), lives: $('#lives'),
-    bank: $('#bank'), zones: $('#zones'), modeTitle: $('#modeTitle'), modeBadge: $('#modeBadge'),
-    qText: $('#questionText'), opts: $('#options'), qFeedback: $('#qFeedback'),
-    hits: $('#hits'), fails: $('#fails')
-  };
+/* ===============================
+   DATOS DEL JUEGO
+   =============================== */
+const PARTIDAS_BASE = [
+  {nombre:"Caja y Bancos", monto:12000, zona:"activo", sub:"Circulante"},
+  {nombre:"Cuentas por Cobrar (90 días)", monto:18000, zona:"activo", sub:"Circulante"},
+  {nombre:"Inventarios", monto:15000, zona:"activo", sub:"Circulante"},
+  {nombre:"Propiedad, Planta y Equipo", monto:90000, zona:"activo", sub:"No circulante"},
+  {nombre:"Depreciación Acumulada (–)", monto:-8000, zona:"activo", sub:"Correctiva"},
+  {nombre:"Gastos Pagados por Anticipado", monto:4000, zona:"activo", sub:"Circulante"},
+  {nombre:"Clientes Incobrables (estimación –)", monto:-1200, zona:"activo", sub:"Correctiva"},
 
-  const btn = {
-    start: $('#btnStart'), practice: $('#btnPractice'), how: $('#btnHow'),
-    check: $('#btnCheck'), skip: $('#btnSkip'), closeHow: $('#btnCloseHow'), startFromHow: $('#btnStartFromHow')
-  };
+  {nombre:"Proveedores", monto:10000, zona:"pasivo", sub:"Corto plazo"},
+  {nombre:"Impuestos por pagar", monto:3000, zona:"pasivo", sub:"Corto plazo"},
+  {nombre:"Acreedores diversos", monto:4500, zona:"pasivo", sub:"Corto plazo"},
+  {nombre:"Crédito bancario 5 años", monto:22000, zona:"pasivo", sub:"Largo plazo"},
+  {nombre:"Documentos por pagar a 2 años", monto:14000, zona:"pasivo", sub:"Largo plazo"},
 
-  const dlgHow = $('#dlgHow');
+  {nombre:"Capital Social", monto:50000, zona:"capital", sub:"Contribuido"},
+  {nombre:"Utilidades Retenidas", monto:12000, zona:"capital", sub:"Ganado"},
+  {nombre:"Resultado del ejercicio", monto:6500, zona:"capital", sub:"Ganado"}
+];
 
-  // ======= Datos base (partidas + preguntas) =======
-  // Partidas (nombre, monto, clave correcta: 'activo' | 'pasivo' | 'capital', subclasificación)
-  const PARTIDAS = [
-    {n:'Caja y Bancos', m: 12000, z:'activo', sub:'Circulante'},
-    {n:'Cuentas por Cobrar (90 días)', m: 18000, z:'activo', sub:'Circulante'},
-    {n:'Inventarios', m: 15000, z:'activo', sub:'Circulante'},
-    {n:'Propiedad, Planta y Equipo', m: 90000, z:'activo', sub:'No Circulante'},
-    {n:'Depreciación Acumulada (−)', m: -8000, z:'activo', sub:'No Circulante'},
-    {n:'Gastos Pagados por Anticipado', m: 4000, z:'activo', sub:'Circulante'},
-    {n:'Clientes Incobrables (estimación −)', m: -1200, z:'activo', sub:'Circulante'},
-
-    {n:'Proveedores', m: 10000, z:'pasivo', sub:'Corto Plazo'},
-    {n:'Documentos por Pagar a 2 años', m: 14000, z:'pasivo', sub:'Largo Plazo'},
-    {n:'Impuestos por Pagar', m: 3000, z:'pasivo', sub:'Corto Plazo'},
-    {n:'Acreedores Diversos', m: 4500, z:'pasivo', sub:'Corto Plazo'},
-    {n:'Crédito Bancario 5 años', m: 22000, z:'pasivo', sub:'Largo Plazo'},
-
-    {n:'Capital Social', m: 50000, z:'capital', sub:'Contribuido'},
-    {n:'Utilidades Retenidas', m: 12000, z:'capital', sub:'Ganado'},
-    {n:'Resultado del Ejercicio', m: 6500, z:'capital', sub:'Ganado'}
-  ];
-
-  // Preguntas tipo test (texto, opciones[], correcta)
-  const PREGUNTAS = [
-    {t:'Una deuda bancaria a 5 años pertenece a…', o:['Pasivo a Corto Plazo','Pasivo a Largo Plazo','Activo No Circulante','Capital Ganado'], c:1},
-    {t:'La fórmula del Balance General es…', o:['A + P = C','A = P + C','A + C = P','P = A + C'], c:1},
-    {t:'La “Depreciación Acumulada” se presenta en…', o:['Activo con signo positivo','Pasivo a Corto Plazo','Reducción de activo (signo −)','Capital Social'], c:2},
-    {t:'“Caja y Bancos” es un…', o:['Activo Circulante','Pasivo a Corto Plazo','Capital Contribuido','Gasto'], c:0},
-    {t:'“Utilidades Retenidas” pertenece a…', o:['Pasivo Largo Plazo','Capital Ganado','Activo No Circulante','Gasto'], c:1},
-    {t:'Los “Proveedores” se clasifican como…', o:['Activo Circulante','Pasivo a Corto Plazo','Capital Social','Ingreso'], c:1},
-    {t:'“Inventarios” pertenece a…', o:['Activo Circulante','Pasivo a Largo Plazo','Activo No Circulante','Capital Ganado'], c:0},
-    {t:'Si A = 100 y P = 40, entonces C = …', o:['60','140','40','100'], c:0},
-    {t:'Los gastos pagados por anticipado son…', o:['Activo','Pasivo','Capital','Ingreso'], c:0},
-    {t:'La cuenta que reduce “Clientes” por incobrables es…', o:['Provisión de Deudores','Acreedores Diversos','Inventarios','Capital Social'], c:0}
-  ];
-
-  // Transacciones para el modo Constructor (descripción, efecto: arreglo de {zona, monto})
-  const TRANS = [
-    {d:'Compra de inventario al contado por $3,000', e:[{z:'activo', m:3000}, {z:'activo', m:-3000}]},
-    {d:'Pago a proveedores $2,000', e:[{z:'pasivo', m:-2000}, {z:'activo', m:-2000}]},
-    {d:'Préstamo bancario a 3 años por $10,000 (entra a bancos)', e:[{z:'pasivo', m:10000}, {z:'activo', m:10000}]},
-    {d:'Ajuste depreciación del periodo $1,200', e:[{z:'activo', m:-1200}, {z:'capital', m:-1200}]},
-    {d:'Venta al contado $4,500 con costo $2,000', e:[{z:'activo', m:4500}, {z:'capital', m:2500}, {z:'activo', m:-2000}]},
-    {d:'Emisión de capital por $8,000, entra a bancos', e:[{z:'capital', m:8000}, {z:'activo', m:8000}]},
-    {d:'Pago de impuestos $900', e:[{z:'activo', m:-900}, {z:'capital', m:-900}]},
-    {d:'Compra de equipo con crédito bancario $12,000', e:[{z:'activo', m:12000}, {z:'pasivo', m:12000}]},
-  ];
-
-  // ======= Estado del juego =======
-  const state = {
-    mode: 0, // 0: DragDrop, 1: Constructor, 2: Relámpago
-    level: 1, round: 1, maxRounds: 10,
-    score: 0, streak: 0, hits: 0, fails: 0, lives: 3,
-    practice: false,
-    time: 60, timeMax: 60, timer: null,
-    bank: [], placed: {activo:[], pasivo:[], capital:[]},
-    qIndex: 0, chosen: null,
-    build: {ledger: {activo:0, pasivo:0, capital:0}, step:0, trans: null}
-  };
-
-  // ======= Utilidades =======
-  const fmt = n => {
-    const s = n < 0 ? '-' : '';
-    const x = Math.abs(n).toLocaleString('es-MX');
-    return s + '$' + x;
-  };
-  const rand = (min, max) => Math.floor(Math.random()*(max-min+1))+min;
-  const shuffle = arr => [...arr].sort(()=>Math.random()-0.5);
-
-  function save(){
-    const best = parseInt(localStorage.getItem('bg_best')||'0',10);
-    if(state.score>best){ localStorage.setItem('bg_best', String(state.score)) }
-    ui.best.textContent = localStorage.getItem('bg_best') || '0';
+const PREGUNTAS = [
+  {
+    texto:"Una deuda bancaria a 5 años pertenece a…",
+    opciones:["Pasivo a corto plazo","Pasivo a largo plazo","Activo no circulante","Capital ganado"],
+    correcta:1,
+    exp:"Es una obligación mayor a un año, por eso es pasivo a largo plazo."
+  },
+  {
+    texto:"La fórmula del Balance General es…",
+    opciones:["A + P = C","A = P + C","A + C = P","P = A + C"],
+    correcta:1,
+    exp:"Siempre: Activo = Pasivo + Capital."
+  },
+  {
+    texto:"¿Cómo se clasifica “Caja y Bancos”?",
+    opciones:["Activo circulante","Pasivo a corto plazo","Capital contribuido","Gasto del periodo"],
+    correcta:0,
+    exp:"Es efectivo disponible, por eso es Activo circulante."
+  },
+  {
+    texto:"La depreciación acumulada se presenta como…",
+    opciones:["Pasivo","Cuenta correctiva de activo","Capital","Ingreso"],
+    correcta:1,
+    exp:"Reduce el valor del activo, es cuenta correctiva de activo."
+  },
+  {
+    texto:"“Utilidades retenidas” pertenece a…",
+    opciones:["Activo","Pasivo","Capital ganado","Capital contribuido"],
+    correcta:2,
+    exp:"Son utilidades acumuladas de la empresa: capital ganado."
+  },
+  {
+    texto:"“Proveedores” se clasifica como…",
+    opciones:["Activo circulante","Pasivo a corto plazo","Pasivo a largo plazo","Capital ganado"],
+    correcta:1,
+    exp:"Son deudas con proveedores a corto plazo, por eso pasivo a corto plazo."
+  },
+  {
+    texto:"Si A = 150, P = 40, ¿cuánto debe ser C?",
+    opciones:["110","40","190","150"],
+    correcta:0,
+    exp:"A = P + C → 150 = 40 + C → C = 110."
+  },
+  {
+    texto:"Los gastos pagados por anticipado son…",
+    opciones:["Activo","Pasivo","Capital","Ingreso"],
+    correcta:0,
+    exp:"Aún representan un derecho a recibir servicios, por eso son activo."
   }
-  function load(){ ui.best.textContent = localStorage.getItem('bg_best') || '0'; }
+];
 
-  // ======= Render de HUD =======
-  function renderHUD(){
-    ui.score.textContent = state.score;
-    ui.level.textContent = state.level;
-    ui.streak.textContent = state.streak;
-    ui.hits.textContent = state.hits;
-    ui.fails.textContent = state.fails;
-    ui.modeBadge.textContent = `Ronda ${state.round}/${state.maxRounds}`;
+/* ===============================
+   ESTADO
+   =============================== */
+const state = {
+  score:0,
+  streak:0,
+  round:1,
+  maxRounds:10,
+  hits:0,
+  fails:0,
+  lives:3,
+  timeMax:60,
+  time:60,
+  timer:null,
+  practice:false,
+  bankItems:[],     // partidas que quedan en el banco
+  qIndex:null,
+  qAnswered:false,
+  qSelected:null
+};
 
-    ui.lives.innerHTML = '';
-    for(let i=0;i<3;i++){
-      const d = document.createElement('div'); d.className = 'life' + (i<state.lives?'':' out');
-      ui.lives.appendChild(d);
-    }
+/* ===============================
+   HUD
+   =============================== */
+const ui = {
+  score:$("#score"),
+  streak:$("#streak"),
+  round:$("#round"),
+  best:$("#best"),
+  hits:$("#hits"),
+  fails:$("#fails"),
+  lives:$("#lives"),
+  timebar:$("#timebar"),
+  timeleft:$("#timeleft"),
+  bank:$("#bank"),
+  sumA:$("#sum-activo"),
+  sumP:$("#sum-pasivo"),
+  sumC:$("#sum-capital"),
+  qText:$("#qText"),
+  qOptions:$("#qOptions"),
+  qFeedback:$("#qFeedback"),
+  modeTag:$("#modeTag")
+};
+
+function loadBest(){
+  const b = localStorage.getItem("bg_best") || "0";
+  ui.best.textContent = b;
+}
+function saveBest(){
+  const b = parseInt(localStorage.getItem("bg_best") || "0",10);
+  if(state.score > b){
+    localStorage.setItem("bg_best", String(state.score));
+    ui.best.textContent = state.score;
   }
+}
 
-  function setTime(t){
-    state.time = Math.max(0, Math.min(t, state.timeMax));
-    ui.timeleft.textContent = String(state.time).padStart(2,'0');
-    const pct = (state.time/state.timeMax)*100; ui.timebar.style.width = pct + '%';
+function renderLives(){
+  ui.lives.innerHTML = "";
+  for(let i=0;i<3;i++){
+    const d = document.createElement("div");
+    d.className = "life" + (i<state.lives ? "" : " out");
+    ui.lives.appendChild(d);
   }
+}
 
-  function startTimer(){
-    if(state.practice){ setTime(state.timeMax); return }
-    stopTimer(); setTime(state.timeMax);
-    state.timer = setInterval(()=>{
-      setTime(state.time-1);
-      if(state.time<=0){
-        loseLife('⏱️ Tiempo agotado');
-      } else if(state.time<=5){ AudioFX.tick() }
-    }, 1000);
-  }
-  function stopTimer(){ if(state.timer){ clearInterval(state.timer); state.timer=null } }
+function setTime(t){
+  state.time = Math.max(0, Math.min(t, state.timeMax));
+  ui.timeleft.textContent = String(state.time).padStart(2,"0");
+  ui.timebar.style.width = (state.time/state.timeMax*100)+"%";
+}
 
-  // ======= Inicializar partida =======
-  function resetRound(){
-    state.round = 1; state.level = 1; state.lives = 3; state.hits = 0; state.fails = 0; state.streak=0; state.score=0; state.practice=false;
-    nextRound(true);
-  }
-
-  function nextRound(first=false){
-    // Aumentar dificultad por nivel
-    const baseTime = 60; const timeDec = Math.min(35, (state.level-1)*5);
-    state.timeMax = baseTime - timeDec; if(state.practice) state.timeMax = 9999;
+function startTimer(){
+  clearInterval(state.timer);
+  if(state.practice){
     setTime(state.timeMax);
-
-    // Selección de modo rotativo: 0 -> 1 -> 2 -> 0 …
-    if(!first){ state.mode = (state.mode+1)%3; }
-    renderModeTitle();
-
-    // Configurar elementos según modo
-    if(state.mode===0){ setupDragDrop(); }
-    if(state.mode===1){ setupBuilder(); }
-    if(state.mode===2){ setupQuiz(); }
-
-    startTimer(); renderHUD();
+    return;
   }
-
-  function renderModeTitle(){
-    const names = ['Clasificación Drag & Drop','Constructor del Balance','Reto Relámpago'];
-    ui.modeTitle.textContent = 'Modo: ' + names[state.mode];
-  }
-
-  // ======= MODO 0: CLASIFICACIÓN DRAG & DROP =======
-  function setupDragDrop(){
-    // limpiar zonas
-    state.bank = []; state.placed = {activo:[], pasivo:[], capital:[]};
-    $$('#sum-activo, #sum-pasivo, #sum-capital').forEach(el=> el.textContent = '$0');
-    $$('.zone-list').forEach(z=> z.innerHTML='');
-
-    const n = 5 + Math.min(5, state.level); // ítems crecientes con nivel
-    state.bank = shuffle(PARTIDAS).slice(0, n);
-
-    renderBank();
-
-    // preparar dropzones
-    $$('.dropzone').forEach(z=>{
-      z.addEventListener('dragover', e=>{ e.preventDefault(); z.classList.add('active');});
-      z.addEventListener('dragleave', ()=> z.classList.remove('active'));
-      z.addEventListener('drop', e=>{
-        e.preventDefault(); z.classList.remove('active');
-        const id = e.dataTransfer.getData('text/plain');
-        const item = state.bank.find(x=> x.id === id);
-        if(!item) return; // ya colocado
-        const correct = z.dataset.zone === item.z;
-        placeCard(item, z.dataset.zone, correct);
-      })
-    });
-  }
-
-  function renderBank(){
-    ui.bank.innerHTML = '';
-    state.bank.forEach((it, idx)=>{
-      it.id = it.id || `p_${Math.random().toString(36).slice(2)}`;
-      const d = document.createElement('div'); d.className='card'; d.draggable=true; d.id = it.id;
-      d.innerHTML = `<h4>${it.n}</h4>
-        <div class="chip-row"><span>${it.sub}</span><span class="amt">${fmt(it.m)}</span></div>`;
-      d.addEventListener('dragstart', e=>{
-        e.dataTransfer.setData('text/plain', it.id);
-      });
-      ui.bank.appendChild(d);
-    });
-  }
-
-  function placeCard(item, zone, correct){
-    // quitar del banco
-    state.bank = state.bank.filter(x=> x.id!==item.id);
-    const target = $(`.dropzone[data-zone="${zone}"] .zone-list`);
-    const card = document.createElement('div'); card.className='card';
-    card.innerHTML = `<h4>${item.n}</h4><div class="chip-row"><span>${item.sub}</span><span class="amt">${fmt(item.m)}</span></div>`;
-    target.appendChild(card);
-
-    // sumar si correcto, si no regresar al banco y penalizar
-    if(correct){
-      state.placed[zone].push(item); addScore(10); addStreak(); AudioFX.ok();
-    }else{
-      addScore(-5); resetStreak(); loseLife('❌ Clasificación incorrecta'); AudioFX.bad();
-      // devolver el ítem al banco
-      setTimeout(()=>{ state.bank.push(item); renderBank(); }, 350);
+  setTime(state.timeMax);
+  state.timer = setInterval(()=>{
+    setTime(state.time-1);
+    if(state.time<=0){
+      clearInterval(state.timer);
+      loseLife("⏱️ Tiempo agotado");
     }
+  },1000);
+}
 
-    recalcSums();
+function updateHUD(){
+  ui.score.textContent = state.score;
+  ui.streak.textContent = state.streak;
+  ui.round.textContent = state.round;
+  ui.hits.textContent = state.hits;
+  ui.fails.textContent = state.fails;
+  renderLives();
+}
 
-    // si ya no hay en banco, ronda completa
-    if(state.bank.length===0){
-      roundComplete();
-    }
+/* ===============================
+   BANCO + ZONAS
+   =============================== */
+function newRound(){
+  clearInterval(state.timer);
+  if(state.round>state.maxRounds){
+    showToast("🏁 ¡Completaste todas las rondas! Se reinicia el juego.");
+    resetGame();
+    return;
   }
 
-  function recalcSums(){
-    const sumA = state.placed.activo.reduce((a,b)=>a+b.m,0);
-    const sumP = state.placed.pasivo.reduce((a,b)=>a+b.m,0);
-    const sumC = state.placed.capital.reduce((a,b)=>a+b.m,0);
-    $('#sum-activo').textContent = fmt(sumA);
-    $('#sum-pasivo').textContent = fmt(sumP);
-    $('#sum-capital').textContent = fmt(sumC);
-  }
+  // seleccionar 6-8 partidas aleatorias
+  const shuffled = [...PARTIDAS_BASE].sort(()=>Math.random()-0.5);
+  const n = 6;
+  state.bankItems = shuffled.slice(0,n).map((p,idx)=>({
+    id:"p_"+Date.now()+"_"+idx,
+    ...p
+  }));
 
-  // ======= MODO 1: CONSTRUCTOR DEL BALANCE =======
-  function setupBuilder(){
-    // limpiar tablero y generar una transacción
-    $$('.zone-list').forEach(z=> z.innerHTML='');
-    $$('#sum-activo, #sum-pasivo, #sum-capital').forEach(el=> el.textContent = '$0');
-    ui.bank.innerHTML = '';
+  // limpiar zonas
+  $$("#zones .zone-list").forEach(z=>z.innerHTML="");
+  ui.sumA.textContent = "$0";
+  ui.sumP.textContent = "$0";
+  ui.sumC.textContent = "$0";
 
-    state.build.ledger = {activo:0, pasivo:0, capital:0};
-    state.build.step = 0;
-    state.build.trans = TRANS[rand(0, TRANS.length-1)];
+  renderBank();
+  startTimer();
+  updateHUD();
+}
 
-    const d = document.createElement('div'); d.className='card';
-    d.innerHTML = `<h4>Transacción</h4><div class="chip-row"><span>${state.build.trans.d}</span><span class="amt">&nbsp;</span></div>`;
+function renderBank(){
+  ui.bank.innerHTML = "";
+  state.bankItems.forEach(item=>{
+    const d = document.createElement("div");
+    d.className = "card-item";
+    d.draggable = true;
+    d.dataset.id = item.id;
+    d.innerHTML = `
+      <h4>${item.nombre}</h4>
+      <div class="card-meta">
+        <span>${item.sub}</span>
+        <span class="card-amt">${fmt(item.monto)}</span>
+      </div>
+    `;
+    d.addEventListener("dragstart", e=>{
+      e.dataTransfer.setData("text/plain", item.id);
+    });
     ui.bank.appendChild(d);
-
-    // crear 6 botones de efecto: +A, −A, +P, −P, +C, −C
-    const effects = [
-      {k:'+A', z:'activo', s:1}, {k:'−A', z:'activo', s:-1},
-      {k:'+P', z:'pasivo', s:1}, {k:'−P', z:'pasivo', s:-1},
-      {k:'+C', z:'capital', s:1}, {k:'−C', z:'capital', s:-1}
-    ];
-    const wrap = document.createElement('div'); wrap.style.display='flex'; wrap.style.flexWrap='wrap'; wrap.style.gap='8px'; wrap.style.marginTop='8px';
-    effects.forEach(eff=>{
-      const b = document.createElement('button'); b.className='btn ghost'; b.textContent = eff.k;
-      b.addEventListener('click', ()=> applyEffect(eff)); wrap.appendChild(b);
-    });
-    ui.bank.appendChild(wrap);
-
-    // indicador de balance
-    const ind = document.createElement('div'); ind.style.marginTop='8px'; ind.innerHTML = `<span class="pill">A: <b id="bA">$0</b></span> <span class="pill">P: <b id="bP">$0</b></span> <span class="pill">C: <b id="bC">$0</b></span> <span class="pill" id="bOK">¿A = P + C?</span>`;
-    ui.bank.appendChild(ind);
-
-    // controles de cantidad
-    const ctl = document.createElement('div'); ctl.style.marginTop='8px';
-    ctl.innerHTML = `<div class="card" style="cursor:auto"><h4>Monto</h4><div class="chip-row"><input id="bAmt" type="number" value="0" style="width:140px; padding:6px; border-radius:10px; border:1px solid var(--glass-bd); background:var(--panel-2); color:var(--ink)"><span><button class='btn' id='bAdd'>Aplicar</button></span></div></div>`;
-    ui.bank.appendChild(ctl);
-
-    $('#bAdd').addEventListener('click', ()=>{
-      const v = parseFloat($('#bAmt').value||'0');
-      if(!v) return;
-      // aplicar al último botón presionado (guardar en memoria)
-      if(lastEffect){ applyEffect({...lastEffect}, v) }
-    });
-  }
-
-  let lastEffect = null;
-  function applyEffect(eff, amount=null){
-    lastEffect = eff;
-    const v = amount===null ? Math.abs(rand(500, 5000)) : Math.abs(amount);
-    state.build.ledger[eff.z] += eff.s * v;
-    updateBuilderUI();
-
-    // ver si coincide con alguno de los efectos reales (tolerancia por orden)
-    const step = state.build.step;
-    const trans = state.build.trans;
-    const exp = trans.e[step];
-    if(!exp) return; // no más pasos
-
-    const ok = (eff.z === exp.z) && (eff.s === Math.sign(exp.m)) && (v === Math.abs(exp.m));
-    if(ok){
-      state.build.step++;
-      addScore(12); addStreak(); AudioFX.ok();
-      if(state.build.step>=trans.e.length){
-        // todas las partes aplicadas — ronda lista si cuadra el balance
-        const a = state.build.ledger.activo; const p = state.build.ledger.pasivo; const c = state.build.ledger.capital;
-        if(a === (p + c)){
-          roundComplete();
-        } else {
-          // aún no cuadra — breve hint
-          hint(`💡 Falta cuadrar: A=${fmt(a)} | P+C=${fmt(p+c)}`);
-        }
-      }
-    }else{
-      addScore(-6); resetStreak(); loseLife('❌ Efecto incorrecto'); AudioFX.bad();
-    }
-  }
-
-  function updateBuilderUI(){
-    $('#bA').textContent = fmt(state.build.ledger.activo);
-    $('#bP').textContent = fmt(state.build.ledger.pasivo);
-    $('#bC').textContent = fmt(state.build.ledger.capital);
-    const ok = state.build.ledger.activo === (state.build.ledger.pasivo + state.build.ledger.capital);
-    $('#bOK').textContent = ok ? '✅ ¡Balanceado!' : '❓ ¿A = P + C?';
-  }
-
-  // ======= MODO 2: RETO RELÁMPAGO (QUIZ) =======
-  function setupQuiz(){
-    state.qIndex = 0; renderQuestion();
-  }
-
-  function renderQuestion(){
-    const q = PREGUNTAS[state.qIndex % PREGUNTAS.length];
-    ui.qText.textContent = q.t;
-    ui.opts.innerHTML = '';
-    q.o.forEach((txt, i)=>{
-      const d = document.createElement('div'); d.className='option'; d.innerHTML = `<span>${txt}</span><span class='amt'>${i+1}</span>`;
-      d.addEventListener('click', ()=> selectOption(i));
-      ui.opts.appendChild(d);
-    });
-    ui.qFeedback.innerHTML = '';
-    state.chosen = null;
-  }
-
-  function selectOption(i){
-    state.chosen = i;
-    $$('.option').forEach((el, idx)=>{
-      el.classList.toggle('correct', idx===i); // resaltado de selección
-    });
-  }
-
-  btn.check.addEventListener('click', ()=>{
-    const q = PREGUNTAS[state.qIndex % PREGUNTAS.length];
-    if(state.chosen===null){ hint('Selecciona una opción.'); return }
-    const opts = $$('.option');
-    opts.forEach((el, idx)=>{
-      el.classList.remove('correct'); el.classList.remove('wrong');
-      if(idx===q.c){ el.classList.add('correct') }
-      if(idx===state.chosen && state.chosen!==q.c){ el.classList.add('wrong') }
-    });
-    if(state.chosen===q.c){ addScore(8); addStreak(); state.hits++; ui.qFeedback.innerHTML = '<span class="pill good">Correcto</span>'; AudioFX.ok(); }
-    else { addScore(-4); resetStreak(); state.fails++; ui.qFeedback.innerHTML = '<span class="pill bad">Incorrecto</span>'; loseLife('❌ Respuesta incorrecta'); AudioFX.bad(); }
-    renderHUD();
-    state.qIndex++;
-    setTimeout(()=>{ renderQuestion(); }, 800);
   });
-  btn.skip.addEventListener('click', ()=>{ state.qIndex++; renderQuestion(); });
+}
 
-  // ======= Puntuación / vidas =======
-  function addScore(n){ state.score = Math.max(0, state.score + n); ui.score.textContent = state.score; save(); }
-  function addStreak(){ state.streak++; ui.streak.textContent = state.streak; if(state.streak>0 && state.streak%3===0){ addScore(5); hint('🔥 Bonificación por racha +5'); } }
-  function resetStreak(){ state.streak = 0; ui.streak.textContent = 0; }
+function setupDropzones(){
+  $$(".dropzone").forEach(zone=>{
+    zone.addEventListener("dragover", e=>{
+      e.preventDefault();
+      zone.classList.add("active");
+    });
+    zone.addEventListener("dragleave", ()=>{
+      zone.classList.remove("active");
+    });
+    zone.addEventListener("drop", e=>{
+      e.preventDefault();
+      zone.classList.remove("active");
+      const id = e.dataTransfer.getData("text/plain");
+      if(!id) return;
+      handleDrop(id, zone.dataset.zone);
+    });
+  });
+}
 
-  function loseLife(reason=''){ if(state.practice) return; state.lives--; renderHUD(); if(reason) hint(reason); if(state.lives<=0){ gameOver(); } }
+function handleDrop(id, targetZone){
+  const idx = state.bankItems.findIndex(p=>p.id===id);
+  if(idx===-1) return; // ya se usó
 
-  function roundComplete(){
-    stopTimer(); state.hits++; addScore(20); AudioFX.level();
-    hint('✅ Ronda completa');
-    if(state.round>=state.maxRounds){
-      // subir nivel
-      state.level++; state.round = 1; state.lives=3; hint(`⬆️ Nivel ${state.level}`);
-    } else {
-      state.round++;
-    }
-    renderHUD();
-    setTimeout(()=> nextRound(), 650);
+  const item = state.bankItems[idx];
+  const correct = (item.zona === targetZone);
+
+  if(correct){
+    state.bankItems.splice(idx,1); // lo saco del banco
+    placeInZone(item, targetZone);
+    addScore(10);
+    addStreak();
+    showToast("✅ Correcto: "+item.nombre);
+  }else{
+    addScore(-5);
+    resetStreak();
+    loseLife("❌ Clasificación incorrecta");
+    showToast("Revisa si es Activo, Pasivo o Capital");
   }
 
-  function gameOver(){
-    stopTimer(); hint(`💀 Game Over | Puntaje: ${state.score}`);
-    // reset tras breve pausa
-    setTimeout(resetRound, 1200);
+  if(state.bankItems.length===0){
+    // ronda terminada
+    state.hits++;
+    state.round++;
+    updateHUD();
+    saveBest();
+    setTimeout(()=>{
+      showToast("⚡ Nueva ronda");
+      newRound();
+      newQuestion();   // también nueva pregunta
+    },700);
   }
+  recalcSums();
+}
 
-  // ======= Mensajes / hints =======
-  let hintTO = null;
-  function hint(msg){
-    clearTimeout(hintTO);
-    const el = document.createElement('div');
-    el.className = 'tag'; el.style.position='fixed'; el.style.left='50%'; el.style.bottom='24px'; el.style.transform='translateX(-50%)'; el.style.zIndex='9999';
-    el.style.background='linear-gradient(135deg, #1f2d66, #253581)'; el.style.boxShadow='var(--shadow)';
-    el.innerHTML = `<span class="dot"></span>${msg}`;
-    document.body.appendChild(el);
-    hintTO = setTimeout(()=>{ el.remove() }, 1600);
+function placeInZone(item, zoneKey){
+  const cont = document.querySelector(`.dropzone[data-zone="${zoneKey}"] .zone-list`);
+  const d = document.createElement("div");
+  d.className = "card-item";
+  d.innerHTML = `
+    <h4>${item.nombre}</h4>
+    <div class="card-meta">
+      <span>${item.sub}</span>
+      <span class="card-amt">${fmt(item.monto)}</span>
+    </div>
+  `;
+  cont.appendChild(d);
+}
+
+function recalcSums(){
+  let sumA=0,sumP=0,sumC=0;
+  const readZone = (zoneKey)=>{
+    const el = document.querySelector(`.dropzone[data-zone="${zoneKey}"] .zone-list`);
+    return Array.from(el.children).reduce((acc,card)=>{
+      const amtText = card.querySelector(".card-amt").textContent.replace(/[^\d\-]/g,"");
+      return acc + (parseInt(amtText||"0",10));
+    },0);
+  };
+  sumA = readZone("activo");
+  sumP = readZone("pasivo");
+  sumC = readZone("capital");
+  ui.sumA.textContent = fmt(sumA);
+  ui.sumP.textContent = fmt(sumP);
+  ui.sumC.textContent = fmt(sumC);
+}
+
+/* ===============================
+   QUIZ (SIN BUGS)
+   =============================== */
+function newQuestion(){
+  // elegir pregunta aleatoria distinta a la anterior
+  let idx;
+  do{
+    idx = Math.floor(Math.random()*PREGUNTAS.length);
+  }while(idx===state.qIndex);
+  state.qIndex = idx;
+  state.qAnswered = false;
+  state.qSelected = null;
+
+  const q = PREGUNTAS[idx];
+  ui.qText.textContent = q.texto;
+  ui.qFeedback.textContent = "";
+
+  ui.qOptions.innerHTML = "";
+  q.opciones.forEach((txt,i)=>{
+    const d = document.createElement("div");
+    d.className = "option";
+    d.dataset.index = i;
+    d.innerHTML = `<span>${txt}</span><span>${i+1}</span>`;
+    d.addEventListener("click", ()=>{
+      if(state.qAnswered) return; // ya se calificó, esperar a nueva pregunta
+      state.qSelected = i;
+      // limpiar selección visual previa
+      $$(".option").forEach(o=>o.classList.remove("selected"));
+      d.classList.add("selected");
+    });
+    ui.qOptions.appendChild(d);
+  });
+}
+
+function gradeQuestion(){
+  if(state.qAnswered) return;
+  const q = PREGUNTAS[state.qIndex];
+  if(state.qSelected===null){
+    showToast("Elige una opción antes de comprobar");
+    return;
   }
+  state.qAnswered = true;
 
-  // ======= Hotkeys =======
-  window.addEventListener('keydown', (e)=>{
-    if(e.key==='r' || e.key==='R'){ e.preventDefault(); nextRound(true) }
-    if(e.key==='h' || e.key==='H'){ e.preventDefault(); openHow() }
-    if(e.key==='m' || e.key==='M'){ e.preventDefault(); state.mode=(state.mode+1)%3; renderModeTitle(); if(state.mode===0) setupDragDrop(); if(state.mode===1) setupBuilder(); if(state.mode===2) setupQuiz(); startTimer(); }
+  const opts = $$(".option");
+  opts.forEach((o,i)=>{
+    o.classList.remove("selected");
+    if(i===q.correcta) o.classList.add("correct");
+    if(i===state.qSelected && state.qSelected!==q.correcta) o.classList.add("wrong");
   });
 
-  // ======= Botones principales =======
-  btn.start.addEventListener('click', ()=>{ state.practice=false; resetRound(); });
-  btn.practice.addEventListener('click', ()=>{ state.practice=true; resetRound(); });
+  if(state.qSelected===q.correcta){
+    ui.qFeedback.textContent = "✔ Correcto: "+q.exp;
+    ui.qFeedback.className = "feedback good";
+    state.hits++;
+    addScore(5);
+    addStreak();
+  }else{
+    ui.qFeedback.textContent = "✖ Incorrecto: "+q.exp;
+    ui.qFeedback.className = "feedback bad";
+    state.fails++;
+    addScore(-3);
+    resetStreak();
+    loseLife("Error en la pregunta");
+  }
+  updateHUD();
+  saveBest();
 
-  function openHow(){ dlgHow.showModal(); }
-  function closeHow(){ dlgHow.close(); }
-  btn.how.addEventListener('click', openHow);
-  btn.closeHow.addEventListener('click', closeHow);
-  btn.startFromHow.addEventListener('click', ()=>{ closeHow(); state.practice=false; resetRound(); });
+  // generar nueva pregunta en 1.2s
+  setTimeout(()=>{ newQuestion(); },1200);
+}
 
-  // ======= Inicio =======
-  load(); renderHUD(); openHow();
-  </script>
+/* ===============================
+   PUNTOS, VIDAS
+   =============================== */
+function addScore(n){
+  state.score = Math.max(0, state.score + n);
+  ui.score.textContent = state.score;
+}
+function addStreak(){
+  state.streak++;
+  ui.streak.textContent = state.streak;
+  if(state.streak>0 && state.streak%3===0){
+    addScore(5);
+    showToast("🔥 Bonificación por racha +5");
+  }
+}
+function resetStreak(){
+  state.streak = 0;
+  ui.streak.textContent = 0;
+}
 
-  <!-- ============================================================
-       LÍNEAS EXTRA DE CONTENIDO COMENTADO PARA DOCUMENTAR EL CÓDIGO
-       (Mantienen el archivo > 800 líneas sin afectar rendimiento)
-       A partir de aquí encontrarás una guía rápida de estudio.
-       ============================================================ -->
-  <script>
-  /*
-  =================== GUIA RÁPIDA DE BALANCE GENERAL ===================
-  1) Estructura básica:
-     - Activo (A): Recursos controlados (Caja, Bancos, Clientes, Inventarios, PPE)
-     - Pasivo (P): Obligaciones presentes (Proveedores, Bancos, Impuestos por pagar)
-     - Capital (C): Patrimonio de los dueños (Capital Social, Utilidades Retenidas)
-     Fórmula: A = P + C
+function loseLife(msg){
+  if(state.practice) return; // en práctica no restamos vidas
+  state.lives--;
+  renderLives();
+  if(msg) showToast(msg);
+  if(state.lives<=0){
+    clearInterval(state.timer);
+    showToast("💀 Game Over — Puntaje: "+state.score);
+    setTimeout(resetGame,1300);
+  }
+}
 
-  2) Clasificación de Activo:
-     a) Circulante: caja, bancos, clientes (≤ 1 año), inventarios, anticipos
-     b) No circulante: propiedades, maquinaria y equipo (menos depreciación), intangibles
+/* ===============================
+   FLUJOS PRINCIPALES
+   =============================== */
+function resetGame(){
+  clearInterval(state.timer);
+  state.score = 0;
+  state.streak = 0;
+  state.round = 1;
+  state.hits = 0;
+  state.fails = 0;
+  state.lives = 3;
+  state.timeMax = 60;
+  state.practice = false;
+  updateHUD();
+  newRound();
+  newQuestion();
+  showToast("Juego reiniciado");
+}
 
-  3) Clasificación de Pasivo:
-     a) Corto plazo: proveedores, impuestos por pagar, documentos a ≤ 1 año
-     b) Largo plazo: créditos a más de un año
+function setPractice(on){
+  state.practice = on;
+  $("#modeTag").textContent = on ? "Modo: Práctica (sin tiempo ni vidas)" : "Modo: Arcade";
+  state.lives = on ? 3 : 3;
+  updateHUD();
+  newRound();
+  newQuestion();
+}
 
-  4) Capital:
-     a) Contribuido: aportaciones de socios (Capital Social, Prima en emisión)
-     b) Ganado: utilidades retenidas, resultado del ejercicio
+/* ===============================
+   EVENTOS
+   =============================== */
+document.getElementById("btnStart").addEventListener("click", ()=>{
+  setPractice(false);
+});
+document.getElementById("btnPractice").addEventListener("click", ()=>{
+  setPractice(true);
+});
+document.getElementById("btnHelp").addEventListener("click", ()=>{
+  showToast("Arrastra partidas a A, P o C. A = P + C. Responde el quiz a la derecha.");
+});
+document.getElementById("btnCheck").addEventListener("click", gradeQuestion);
+document.getElementById("btnSkip").addEventListener("click", ()=>{
+  showToast("Pregunta nueva");
+  newQuestion();
+});
 
-  5) Señales frecuentes de error:
-     - Colocar depreciación acumulada como pasivo. En realidad es una cuenta correctiva de activo (signo negativo).
-     - Confundir gastos pagados por anticipado (ACTIVO) con gastos del periodo.
-     - Incluir ventas o gastos en el balance (van en estado de resultados). Sólo su efecto neto en capital.
+window.addEventListener("keydown", e=>{
+  if(e.key==="r" || e.key==="R"){
+    e.preventDefault();
+    resetGame();
+  }
+  if(e.key==="h" || e.key==="H"){
+    e.preventDefault();
+    showToast("Ayuda: A = P + C. Activo: recursos; Pasivo: deudas; Capital: patrimonio.");
+  }
+  if(e.key==="q" || e.key==="Q"){
+    e.preventDefault();
+    newQuestion();
+  }
+});
 
-  6) Reglas del modo Constructor:
-     - Cada transacción tiene efectos duales o múltiples. Reproducirlos con los botones +A/−A/+P/−P/+C/−C y el monto exacto.
-     - Al finalizar, verificar que A = P + C. Si no, revisar montos o signos.
-
-  7) Sugerencias de estudio:
-     - Practica con casos: compra de inventario, préstamo, pago a proveedores, ajuste de depreciación.
-     - Dibuja T-accounts simples mentalmente para entender los signos.
-     - Revisa la consistencia matemática después de cada movimiento.
-
-  ¡Éxitos! Sigue practicando hasta dominarlo. 
-  */
-  </script>
+/* ===============================
+   INIT
+   =============================== */
+loadBest();
+setupDropzones();
+updateHUD();
+newRound();
+newQuestion();
+</script>
 </body>
 </html>
+
 
