@@ -1,246 +1,409 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NextSkill — Diario Contable PRO</title>
-  <style>
-    :root {
-      --bg: #0b1330;
-      --panel: #101b45;
-      --ink: #eaf0ff;
-      --muted: #b9c5ee;
-      --accent: #4aa3ff;
-      --accent2: #2a4dfb;
-      --good: #34d399;
-      --bad: #f87171;
-    }
-    * {
-      box-sizing: border-box;
-      font-family: "Inter", system-ui, Segoe UI, Roboto, sans-serif;
-    }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--ink);
-    }
-    h1 {
-      text-align: center;
-      margin-top: 20px;
-      color: var(--accent);
-    }
-    h2 {
-      text-align: center;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-    .container {
-      max-width: 950px;
-      margin: 20px auto;
-      padding: 20px;
-      background: var(--panel);
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .cuentas {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin: 20px 0;
-    }
-    .cuenta {
-      background: var(--accent2);
-      color: #fff;
-      padding: 10px 14px;
-      border-radius: 10px;
-      cursor: grab;
-      user-select: none;
-      transition: 0.2s;
-    }
-    .cuenta:hover {
-      transform: scale(1.05);
-      background: #3b5bf5;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      color: #fff;
-    }
-    th, td {
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 8px;
-      text-align: center;
-    }
-    th {
-      background: #1a2b64;
-    }
-    .btn {
-      display: block;
-      margin: 25px auto 10px;
-      background: var(--accent);
-      color: #fff;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .btn:hover {
-      opacity: 0.9;
-    }
-    #msg {
-      text-align: center;
-      margin-top: 10px;
-      font-weight: 600;
-    }
-    .correcto {
-      color: var(--good);
-    }
-    .incorrecto {
-      color: var(--bad);
-    }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .stat {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      text-align: center;
-      padding: 10px;
-    }
-    .stat h3 {
-      margin: 0;
-      color: var(--muted);
-      font-size: 16px;
-    }
-    .stat p {
-      font-weight: 800;
-      font-size: 18px;
-      margin: 5px 0 0;
-    }
-    footer {
-      text-align: center;
-      color: var(--muted);
-      margin: 30px 0;
-    }
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Simulador IVA — Registro contable en operaciones de contado y crédito</title>
+<style>
+:root{
+  --azul:#1d4ed8;
+  --azul-suave:#e0ebff;
+  --fondo:#f4f6fb;
+  --texto:#111827;
+  --muted:#6b7280;
+  --panel:#ffffff;
+  --borde:#d1d5db;
+  --ok:#16a34a;
+  --error:#dc2626;
+  --warn:#f59e0b;
+  --shadow:0 8px 24px rgba(15,23,42,.12);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Inter,sans-serif}
+body{background:var(--fondo);color:var(--texto);}
+h1{font-size:26px;margin-bottom:4px;}
+h2{font-size:20px;margin-bottom:6px;}
+p{line-height:1.5;}
+
+.app{max-width:1200px;margin:18px auto;padding:0 16px;display:grid;grid-template-columns:minmax(0,2.1fr) minmax(280px,0.9fr);gap:16px;}
+@media(max-width:980px){.app{grid-template-columns:1fr;}}
+
+.card{background:var(--panel);border-radius:14px;border:1px solid var(--borde);padding:14px;box-shadow:var(--shadow);}
+.card + .card{margin-top:10px;}
+
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);background:#eff3ff;border-radius:999px;padding:3px 9px;margin-top:6px;}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:10px;border:1px solid transparent;
+  padding:8px 12px;font-size:14px;font-weight:600;cursor:pointer;transition:.15s;}
+.btn.primary{background:var(--azul);color:#fff;box-shadow:var(--shadow);}
+.btn.secondary{background:#f9fafb;border-color:var(--borde);color:#111827;}
+.btn.link{border:none;background:transparent;color:var(--azul);padding:0;}
+.btn.primary:hover{background:#1e40af;}
+.btn.secondary:hover{background:#f3f4f6;}
+
+.top{grid-column:1/-1;margin-bottom:-4px;}
+.top p{color:var(--muted);font-size:14px;margin-top:4px;}
+
+.op-card{margin-bottom:16px;}
+.op-title{font-weight:700;margin-bottom:4px;}
+.op-meta{font-size:13px;color:var(--muted);margin-bottom:8px;}
+.op-desc{font-size:14px;margin-bottom:10px;}
+
+.table-wrap{overflow-x:auto;margin-bottom:8px;}
+.entry-table{width:100%;border-collapse:collapse;font-size:14px;min-width:420px;}
+.entry-table thead{background:#eef2ff;}
+.entry-table th,
+.entry-table td{border:1px solid var(--borde);padding:6px 8px;text-align:left;}
+.entry-table th{text-align:center;font-size:13px;}
+.entry-table td.num{text-align:right;font-variant-numeric:tabular-nums;}
+.entry-table td.center{text-align:center;}
+
+.op-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.op-result{font-size:13px;margin-top:6px;}
+.op-result.ok{color:var(--ok);}
+.op-result.error{color:var(--error);}
+.op-result.neutral{color:var(--muted);}
+
+/* NEO PANEL */
+.neo-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.neo-avatar{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 30% 20%,#fff 0,#dbeafe 40%,#1d4ed8 100%);
+  display:flex;align-items:center;justify-content:center;font-size:28px;color:#0b1120;border:2px solid #bfdbfe;}
+.neo-info h2{margin-bottom:0;font-size:18px;}
+.neo-info p{font-size:13px;color:var(--muted);}
+
+.neo-msg{background:#f3f4ff;border-radius:10px;padding:10px 12px;font-size:14px;color:#111827;border:1px solid #e0e7ff;margin-bottom:8px;}
+.neo-msg strong{color:#1d4ed8;}
+.neo-list{font-size:13px;color:var(--muted);margin-top:6px;padding-left:18px;}
+.neo-list li{margin-bottom:4px;}
+
+.stats{margin-top:8px;padding-top:8px;border-top:1px dashed #e5e7eb;font-size:13px;color:#374151;display:grid;row-gap:2px;}
+
+.tag-ok{color:var(--ok);font-weight:600;}
+.tag-bad{color:var(--error);font-weight:600;}
+.tag-tip{color:var(--warn);font-weight:600;}
+</style>
 </head>
 <body>
-  <h1>📘 Diario Contable PRO</h1>
-  <h2>Arrastra las cuentas para formar asientos que cuadren Debe = Haber</h2>
-
-  <div class="container" id="zona">
-    <div class="cuentas" id="cuentas"></div>
-
-    <table>
-      <thead>
-        <tr><th>Cuenta</th><th>Debe</th><th>Haber</th></tr>
-      </thead>
-      <tbody id="tabla"></tbody>
-    </table>
-
-    <div class="stats">
-      <div class="stat"><h3>Puntaje</h3><p id="puntos">0 XP</p></div>
-      <div class="stat"><h3>Asientos Correctos</h3><p id="asientosOk">0</p></div>
-      <div class="stat"><h3>Nivel</h3><p id="nivel">1</p></div>
+<div class="app">
+  <!-- Encabezado -->
+  <div class="top">
+    <div class="card">
+      <h1>Simulador IVA — Registro contable de operaciones de contado y crédito</h1>
+      <p>
+        Completa el <b>lado correcto (Debe/Haber)</b> de cada cuenta como si estuvieras trabajando en un Excel.
+        Todas las operaciones incluyen IVA al <b>16%</b> y Neo te irá explicando la lógica contable.
+      </p>
+      <div class="badge">🎯 Objetivo: dominar el registro del IVA acreditable, IVA por acreditar y ventas con IVA.</div>
     </div>
-
-    <button class="btn" id="verificar">✅ Verificar Asiento</button>
-    <p id="msg"></p>
   </div>
 
-  <footer>
-    <a href="index.html">⬅ Volver al inicio</a>
-  </footer>
+  <!-- Columna izquierda: operaciones -->
+  <div>
+    <!-- Instrucciones cortas -->
+    <div class="card">
+      <h2>Instrucciones rápidas</h2>
+      <ul class="neo-list">
+        <li>Lee con calma la operación (fecha y contexto).</li>
+        <li>En la tabla, para cada cuenta marca si va en <b>Debe</b> o en <b>Haber</b>.</li>
+        <li>Pulsa <b>“Comprobar operación”</b>. Neo te dirá cuántas cuentas están bien y te dará una explicación.</li>
+        <li>Si te atoras, usa <b>“Ver solución”</b> para mostrar el asiento completo.</li>
+      </ul>
+    </div>
 
-  <script>
-    const cuentas = [
-      "Caja","Clientes","Proveedores","Banco",
-      "Inventario","Capital","Ventas","Gastos",
-      "Equipo","Publicidad"
-    ];
-    const divC = document.getElementById("cuentas");
-    const tabla = document.getElementById("tabla");
-    const msg = document.getElementById("msg");
-    const puntosEl = document.getElementById("puntos");
-    const nivelEl = document.getElementById("nivel");
-    const okEl = document.getElementById("asientosOk");
-    let seleccion = [], puntos = 0, asientosOk = 0;
+    <!-- Operaciones -->
+    <div id="ops"></div>
+  </div>
 
-    // crear botones de cuentas
-    cuentas.forEach(c => {
-      const d = document.createElement("div");
-      d.className = "cuenta";
-      d.textContent = c;
-      d.draggable = true;
-      d.addEventListener("dragstart", e => e.dataTransfer.setData("text/plain", c));
-      divC.appendChild(d);
-    });
+  <!-- Columna derecha: Neo -->
+  <aside>
+    <div class="card">
+      <div class="neo-header">
+        <div class="neo-avatar">🤖</div>
+        <div class="neo-info">
+          <h2>Neo — Mentor IVA</h2>
+          <p>Te acompaño operación por operación. No solo te diré si está bien: te explico <b>por qué</b>.</p>
+        </div>
+      </div>
 
-    // arrastrar y soltar
-    const zona = document.getElementById("zona");
-    zona.addEventListener("dragover", e => e.preventDefault());
-    zona.addEventListener("drop", e => {
-      e.preventDefault();
-      const c = e.dataTransfer.getData("text/plain");
-      seleccion.push(c);
-      if (seleccion.length === 2) {
-        agregarAsiento(seleccion[0], seleccion[1]);
-        seleccion = [];
+      <div id="neo-msg" class="neo-msg">
+        Empecemos por la primera operación. Mi recomendación: piensa siempre en dos preguntas clave:
+        <strong>¿Qué entra a la empresa?</strong> (se carga) y <strong>¿qué sale u obliga?</strong> (se abona).
+      </div>
+
+      <ul class="neo-list">
+        <li><b>IVA acreditable</b>: IVA de compras ya pagado o exigible. También se carga.</li>
+        <li><b>IVA por acreditar</b>: IVA pendiente de pago (crédito). Se carga al comprar y se abona al reclasificar.</li>
+        <li><b>IVA trasladado / causado</b>: IVA que se cobra a los clientes. Se abona en la venta.</li>
+      </ul>
+
+      <div class="stats" id="stats">
+        <div>Operaciones resueltas: <span id="stat-done">0</span> / <span id="stat-total">0</span></div>
+        <div>Cuentas correctas: <span class="tag-ok" id="stat-good">0</span></div>
+        <div>Cuentas con error: <span class="tag-bad" id="stat-bad">0</span></div>
+        <div>Tip: <span class="tag-tip" id="stat-tip">Empieza por la cuenta principal de la operación.</span></div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script>
+// ===================== Datos de las operaciones =====================
+const OPERATIONS = [
+  {
+    id: 1,
+    title: "Enero 3 — Compra de equipo de cómputo a crédito",
+    meta: "Equipo de cómputo + IVA por acreditar, contra documentos por pagar.",
+    desc: "Se compra a crédito equipo de cómputo por $150,000 más IVA al 16%. "
+        + "El proveedor exige documentos por pagar para garantizar la deuda.",
+    rows: [
+      { account:"Equipo de cómputo", amount:"$150,000.00", correct:"D" },
+      { account:"IVA por acreditar", amount:"$24,000.00", correct:"D" },
+      { account:"Documentos por pagar", amount:"$174,000.00", correct:"H" }
+    ],
+    neo: "En una compra de activo fijo a crédito: el equipo y el IVA pendiente se <b>cargan</b> (aumentan activos) "
+       + "y la obligación con el proveedor se <b>abona</b> en Documentos por pagar."
+  },
+  {
+    id: 2,
+    title: "Enero 7 — Compra de mercancía a crédito",
+    meta: "Inventario + IVA por acreditar, contra proveedores.",
+    desc: "Se compra mercancía para la venta por $142,000 más IVA al 16%, todo a crédito con el proveedor.",
+    rows: [
+      { account:"Inventario", amount:"$142,000.00", correct:"D" },
+      { account:"IVA por acreditar", amount:"$22,720.00", correct:"D" },
+      { account:"Proveedores", amount:"$164,720.00", correct:"H" }
+    ],
+    neo: "Cuando compras mercancía a crédito: el inventario y el IVA pendiente se <b>cargan</b>. "
+       + "La cuenta de Proveedores se <b>abona</b> porque representa una deuda."
+  },
+  {
+    id: 3,
+    title: "Enero 11 — Pago de 50% al proveedor y reclasificación de IVA",
+    meta: "Se liquida la mitad de la deuda de la operación del 7 de enero.",
+    desc: "Se paga el 50% de la deuda con el proveedor de mercancías. "
+        + "Al pagar, la mitad del IVA pasa de 'IVA por acreditar' a 'IVA acreditable'.",
+    rows: [
+      { account:"Proveedores", amount:"$82,360.00", correct:"D" },
+      { account:"IVA acreditable", amount:"$11,360.00", correct:"D" },
+      { account:"IVA por acreditar", amount:"$11,360.00", correct:"H" },
+      { account:"Bancos", amount:"$82,360.00", correct:"H" }
+    ],
+    neo: "Al pagar: la deuda con Proveedores se <b>carga</b> (disminuye), Bancos se <b>abona</b> "
+       + "(sale efectivo) y el IVA pagado pasa de 'por acreditar' a <b>IVA acreditable</b> (se carga)."
+  },
+  {
+    id: 4,
+    title: "Enero 15 — Pago de servicios con IVA (repartidos entre venta y administración)",
+    meta: "Servicios por $30,000 más IVA; mitad a gastos de venta y mitad a gastos de administración.",
+    desc: "Se pagan con cheque servicios diversos por $30,000 más IVA al 16%. "
+        + "El 50% se asigna a gastos de venta y el 50% a gastos de administración.",
+    rows: [
+      { account:"Gastos de venta", amount:"$15,000.00", correct:"D" },
+      { account:"Gastos de administración", amount:"$15,000.00", correct:"D" },
+      { account:"IVA acreditable", amount:"$4,800.00", correct:"D" },
+      { account:"Bancos", amount:"$34,800.00", correct:"H" }
+    ],
+    neo: "Los gastos y el IVA pagado se <b>cargan</b> porque representan costo para la empresa. "
+       + "Bancos se <b>abona</b> al salir el dinero del cheque."
+  },
+  {
+    id: 5,
+    title: "Enero 16 — Venta de mercancía a crédito con IVA",
+    meta: "Venta por $124,000 más IVA; costo de la mercancía $67,500.",
+    desc: "Se vende mercancía a crédito por $124,000 más IVA al 16%. "
+        + "El costo de la mercancía entregada es de $67,500.",
+    rows: [
+      { account:"Clientes", amount:"$143,840.00", correct:"D" },
+      { account:"Ventas", amount:"$124,000.00", correct:"H" },
+      { account:"IVA trasladado (causado)", amount:"$19,840.00", correct:"H" },
+      { account:"Costo de ventas", amount:"$67,500.00", correct:"D" },
+      { account:"Inventario", amount:"$67,500.00", correct:"H" }
+    ],
+    neo: "En la venta: Clientes se <b>carga</b> porque nace un derecho de cobro. "
+       + "Ventas e IVA trasladado se <b>abonan</b> (ingreso e impuesto a cargo del cliente). "
+       + "Además, el costo se registra cargando Costo de ventas y abonando Inventario."
+  },
+  {
+    id: 6,
+    title: "Enero 25 — Cobro del 50% al cliente",
+    meta: "El cliente de la venta del 16 de enero paga la mitad de su saldo.",
+    desc: "El cliente de la operación anterior paga el 50% de lo que debe. "
+        + "Se recibe el importe en Bancos.",
+    rows: [
+      { account:"Bancos", amount:"$71,920.00", correct:"D" },
+      { account:"Clientes", amount:"$71,920.00", correct:"H" }
+    ],
+    neo: "Cuando cobras al cliente: Bancos se <b>carga</b> (entra efectivo) y Clientes se <b>abona</b> "
+       + "porque disminuye el saldo que te debe."
+  },
+  {
+    id: 7,
+    title: "Enero 27 — Renta pagada por anticipado con IVA",
+    meta: "Se pagan 3 meses de renta por anticipado: $30,000 más IVA.",
+    desc: "Se paga por adelantado la renta de local por los próximos tres meses, por $30,000 más IVA al 16%, mediante cheque.",
+    rows: [
+      { account:"Renta pagada por anticipado", amount:"$30,000.00", correct:"D" },
+      { account:"IVA acreditable", amount:"$4,800.00", correct:"D" },
+      { account:"Bancos", amount:"$34,800.00", correct:"H" }
+    ],
+    neo: "La renta pagada por anticipado es un <b>activo</b> (se carga) porque todavía tienes derecho a usar el local. "
+       + "El IVA pagado se registra como IVA acreditable (cargo) y Bancos se <b>abona</b> por la salida de efectivo."
+  }
+];
+
+// ===================== Render de las operaciones =====================
+const opsContainer = document.getElementById("ops");
+const statTotal = document.getElementById("stat-total");
+const statDone  = document.getElementById("stat-done");
+const statGood  = document.getElementById("stat-good");
+const statBad   = document.getElementById("stat-bad");
+const statTip   = document.getElementById("stat-tip");
+const neoBox    = document.getElementById("neo-msg");
+
+let totalRows = 0;
+let correctRows = 0;
+let wrongRows = 0;
+let opsSolved = new Set();
+
+statTotal.textContent = OPERATIONS.length;
+
+// crear HTML
+OPERATIONS.forEach((op, opIndex) => {
+  totalRows += op.rows.length;
+
+  const wrap = document.createElement("div");
+  wrap.className = "card op-card";
+
+  const title = document.createElement("div");
+  title.className = "op-title";
+  title.textContent = `Operación ${op.id}. ${op.title}`;
+
+  const meta = document.createElement("div");
+  meta.className = "op-meta";
+  meta.textContent = op.meta;
+
+  const desc = document.createElement("p");
+  desc.className = "op-desc";
+  desc.textContent = op.desc;
+
+  const tableWrap = document.createElement("div");
+  tableWrap.className = "table-wrap";
+
+  const table = document.createElement("table");
+  table.className = "entry-table";
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th style="min-width:160px;">Cuenta</th>
+        <th>Importe referencial</th>
+        <th>Debe</th>
+        <th>Haber</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+  const tbody = table.querySelector("tbody");
+
+  op.rows.forEach((row, rowIndex) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${row.account}</td>
+      <td class="num">${row.amount}</td>
+      <td class="center">
+        <input type="radio" name="op${opIndex}_row${rowIndex}" value="D" />
+      </td>
+      <td class="center">
+        <input type="radio" name="op${opIndex}_row${rowIndex}" value="H" />
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  tableWrap.appendChild(table);
+
+  const actions = document.createElement("div");
+  actions.className = "op-actions";
+  const btnCheck = document.createElement("button");
+  btnCheck.className = "btn primary";
+  btnCheck.textContent = "✅ Comprobar operación";
+  const btnSolution = document.createElement("button");
+  btnSolution.className = "btn secondary";
+  btnSolution.textContent = "👁 Ver solución";
+
+  actions.appendChild(btnCheck);
+  actions.appendChild(btnSolution);
+
+  const result = document.createElement("div");
+  result.className = "op-result neutral";
+  result.textContent = "Completa Debe/Haber y luego presiona “Comprobar operación”.";
+
+  wrap.appendChild(title);
+  wrap.appendChild(meta);
+  wrap.appendChild(desc);
+  wrap.appendChild(tableWrap);
+  wrap.appendChild(actions);
+  wrap.appendChild(result);
+
+  // listeners
+  btnCheck.addEventListener("click", () => {
+    let good = 0, bad = 0;
+    op.rows.forEach((row, rowIndex) => {
+      const radios = document.querySelectorAll(`input[name="op${opIndex}_row${rowIndex}"]`);
+      let chosen = null;
+      radios.forEach(r => { if(r.checked) chosen = r.value; });
+
+      if (!chosen) return; // sin contestar, no cuenta
+
+      if (chosen === row.correct){
+        good++;
+      }else{
+        bad++;
       }
     });
 
-    function agregarAsiento(c1, c2) {
-      const tr1 = document.createElement("tr");
-      tr1.innerHTML = `<td>${c1}</td><td>1000</td><td></td>`;
-      const tr2 = document.createElement("tr");
-      tr2.innerHTML = `<td>${c2}</td><td></td><td>1000</td>`;
-      tabla.append(tr1, tr2);
-    }
+    // actualizar globales
+    correctRows += good;
+    wrongRows   += bad;
+    statGood.textContent = correctRows;
+    statBad.textContent  = wrongRows;
 
-    document.getElementById("verificar").onclick = () => {
-      let debe = 0, haber = 0;
-      tabla.querySelectorAll("tr").forEach(r => {
-        debe += +r.children[1].textContent || 0;
-        haber += +r.children[2].textContent || 0;
-      });
-      if (debe === haber && debe > 0) {
-        msg.textContent = "🎯 Correcto: Debe = Haber";
-        msg.className = "correcto";
-        puntos += 20; asientosOk++;
-        guardarXP(puntos);
-      } else {
-        msg.textContent = "❌ No cuadra, revisa tus movimientos";
-        msg.className = "incorrecto";
-        puntos = Math.max(0, puntos - 5);
-      }
-      actualizarHUD();
-    };
-
-    function actualizarHUD() {
-      puntosEl.textContent = puntos + " XP";
-      okEl.textContent = asientosOk;
-      const lvl = Math.floor(puntos / 100) + 1;
-      nivelEl.textContent = lvl;
+    if (good === op.rows.length && bad === 0){
+      result.className = "op-result ok";
+      result.innerHTML = `✔ Excelente, registraste correctamente las ${op.rows.length} cuentas.`;
+      neoBox.innerHTML = `<strong>Neo:</strong> ${op.neo}`;
+      opsSolved.add(op.id);
+      statDone.textContent = opsSolved.size;
+      statTip.textContent = "Cuando domines todas, intenta reconstruir los asientos en un Excel real.";
+    }else if(good === 0 && bad === 0){
+      result.className = "op-result neutral";
+      result.textContent = "Aún hay cuentas sin seleccionar. Intenta elegir Debe/Haber en todas.";
+      neoBox.innerHTML = "<strong>Neo:</strong> Marca Debe o Haber para cada cuenta. No pasa nada si te equivocas, lo corregimos juntos.";
+      statTip.textContent = "Si dudas, pregúntate: ¿aumenta un activo/gasto (Debe) o aumenta un pasivo/ingreso (Haber)?";
+    }else{
+      result.className = "op-result error";
+      result.innerHTML = `Has acertado <b>${good}</b> cuenta(s) y tienes <b>${bad}</b> con error. `
+        + `Revisa las que no tengas claras y, si quieres, pulsa “Ver solución”.`;
+      neoBox.innerHTML = "<strong>Neo:</strong> Está bien equivocarse. Observa qué tipo de cuenta es cada una: "
+        + "activos y gastos suelen ir al <b>Debe</b>, mientras que pasivos, capital e ingresos van al <b>Haber</b>.";
+      statTip.textContent = "Corrige primero las cuentas de IVA: piensa si el IVA ya es acreditable o aún está por pagar.";
     }
+  });
 
-    function guardarXP(xp) {
-      let data = JSON.parse(localStorage.getItem("NextSkill_XP") || "{}");
-      data.diario = (data.diario || 0) + xp;
-      localStorage.setItem("NextSkill_XP", JSON.stringify(data));
-    }
-  </script>
+  btnSolution.addEventListener("click", () => {
+    op.rows.forEach((row, rowIndex) => {
+      const radios = document.querySelectorAll(`input[name="op${opIndex}_row${rowIndex}"]`);
+      radios.forEach(r => r.checked = (r.value === row.correct));
+    });
+    result.className = "op-result ok";
+    result.innerHTML = "He marcado la solución correcta para esta operación. "
+      + "Analiza cada cuenta y pregúntate por qué va en ese lado.";
+    neoBox.innerHTML = "<strong>Neo:</strong> Cuando mires la solución, intenta explicarla en voz alta: "
+      + "eso fija la lógica en tu memoria mucho mejor que solo copiar.";
+    statTip.textContent = "Intenta repetir el asiento tú solo después de ver la solución.";
+  });
+
+  opsContainer.appendChild(wrap);
+});
+</script>
 </body>
 </html>

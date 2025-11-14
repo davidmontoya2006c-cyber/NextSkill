@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NextSkill — Aprende jugando con inteligencia artificial</title>
+
+<!-- QR LIBRARY -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 <style>
 :root{
   --azul:#2563eb; --azul2:#0b1330; --gris:#f8faff; --texto:#1b2439;
@@ -100,10 +104,9 @@ footer a{color:#fff;text-decoration:underline}
 .neo-input{display:flex;gap:8px;border-top:1px solid var(--bd);padding:10px;background:#fff}
 .neo-input input{flex:1;border:1px solid var(--bd);border-radius:10px;padding:10px}
 .neo-input button{background:#2563eb;color:#fff;border:none;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}
-
-@media(max-width:980px){.hero{grid-template-columns:1fr}}
 </style>
 </head>
+
 <body>
 
 <!-- NAV -->
@@ -124,61 +127,38 @@ footer a{color:#fff;text-decoration:underline}
 <section class="hero">
   <div>
     <h1>Aprende finanzas y contabilidad jugando</h1>
-    <p>NextSkill transforma las materias de la EBC en microjuegos interactivos con IA.  
-       Aprende practicando, responde retos y gana puntos como en un videojuego.</p>
+    <p>NextSkill transforma las materias de la EBC en microjuegos interactivos con IA.</p>
     <a href="#juegos" class="btn main">🎯 Entrar a los juegos</a>
   </div>
   <video src="nextskill-video.mp4" controls autoplay></video>
 </section>
 
-<!-- SECCIÓN ESTRÉS -->
-<section class="estres" id="estres">
+<!-- STORY -->
+<section class="story">
+  <h2>Una nueva forma de aprender</h2>
+  <p>En México, cuatro de cada diez estudiantes universitarios viven estrés académico constante. NextSkill transforma ese reto en motivación.</p>
+  <p>Convierte materias en microjuegos adaptados a tu ritmo con IA.</p>
+  <p>Si te cuesta un tema, baja dificultad. Si avanzas rápido, te reta más.</p>
+</section>
+
+<!-- STRESS -->
+<section class="estres">
   <h2>¿Qué Detona el Estrés?</h2>
   <div class="estres-grid">
-    <div class="estres-item">
-      <img src="https://cdn-icons-png.flaticon.com/512/1828/1828804.png">
-      <h4>Sobrecarga</h4><p>Demasiadas tareas simultáneas</p>
-    </div>
-    <div class="estres-item">
-      <img src="https://cdn-icons-png.flaticon.com/512/633/633611.png">
-      <h4>Sin Tiempo</h4><p>Plazos imposibles de cumplir</p>
-    </div>
-    <div class="estres-item">
-      <img src="https://cdn-icons-png.flaticon.com/512/742/742751.png">
-      <h4>Desmotivación</h4><p>Pérdida de motivación académica</p>
-    </div>
-    <div class="estres-item">
-      <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png">
-      <h4>Exceso Digital</h4><p>Pantallas sin descanso</p>
-    </div>
+    <div class="estres-item"><img src="https://cdn-icons-png.flaticon.com/512/1828/1828804.png"><h4>Sobrecarga</h4><p>Demasiadas tareas</p></div>
+    <div class="estres-item"><img src="https://cdn-icons-png.flaticon.com/512/633/633611.png"><h4>Sin Tiempo</h4><p>Plazos imposibles</p></div>
+    <div class="estres-item"><img src="https://cdn-icons-png.flaticon.com/512/742/742751.png"><h4>Desmotivación</h4><p>Poca energía</p></div>
+    <div class="estres-item"><img src="https://cdn-icons-png.flaticon.com/512/747/747310.png"><h4>Exceso Digital</h4><p>Mucha pantalla</p></div>
   </div>
-  <small>Fuentes: Ansiedad y Estrés (2015), PubMed (2019)</small>
 </section>
 
-<!-- STORY -->
-<section id="story" class="story">
-  <h2>Una nueva forma de aprender</h2>
-  <p>En México, cuatro de cada diez estudiantes universitarios viven estrés académico constante. En NextSkill creemos que aprender no debería doler, sino inspirar.</p>
-  <p>NextSkill convierte las materias en microjuegos personalizados. Si te cuesta un tema, baja la dificultad; si avanzas rápido, te reta más.</p>
-  <p>La IA analiza tus respuestas y adapta el contenido en tiempo real, manteniendo tu motivación.</p>
-</section>
-
-<!-- PROPUESTA DE VALOR -->
+<!-- VALUE -->
 <section class="valor">
   <h2>Propuesta de Valor — Aprender Jugando</h2>
   <div class="valor-grid">
-    <div class="valor-item">
-      <h4>🎮 Microjuegos Educativos</h4>
-      <p>IA que adapta contenido a tu ritmo personal.</p>
-    </div>
-    <div class="valor-item">
-      <h4>🧠 Personalización Cognitiva</h4>
-      <p>Se ajusta a tu estilo de aprendizaje único.</p>
-    </div>
-    <div class="valor-item">
-      <h4>☕ Pausas Activas</h4>
-      <p>Bienestar mental integrado en cada sesión.</p>
-    </div>
+    <div class="valor-item"><h4>🎮 Microjuegos</h4><p>Aprende jugando como si fuera un videojuego.</p></div>
+    <div class="valor-item"><h4>🧠 Adaptación IA</h4><p>La IA ajusta dificultad según tu avance.</p></div>
+    <div class="valor-item"><h4>⚡ Motivación</h4><p>Retroalimentación constante y logros.</p></div>
   </div>
 </section>
 
@@ -188,17 +168,17 @@ footer a{color:#fff;text-decoration:underline}
   <div class="grid3">
     <div class="card">
       <h3>📊 Juego de Finanzas</h3>
-      <p>Analiza decisiones de inversión, riesgo y crecimiento financiero.</p>
+      <p>Simula decisiones financieras reales.</p>
       <a class="btn main" href="game.html" target="_blank">Abrir simulador</a>
     </div>
     <div class="card">
       <h3>📘 Libro Diario PRO</h3>
-      <p>Arrastra cuentas y crea asientos contables que equilibren Debe = Haber.</p>
+      <p>Arrastra cuentas y arma asientos contables.</p>
       <a class="btn ghost" href="diario.html" target="_blank">Abrir simulador</a>
     </div>
     <div class="card">
       <h3>💼 Balance y Estados</h3>
-      <p>Comprende cómo se conectan activos, pasivos y capital en tu balance general.</p>
+      <p>Comprende el balance y sus conexiones.</p>
       <a class="btn main" href="balance.html" target="_blank">Abrir simulador</a>
     </div>
   </div>
@@ -206,35 +186,24 @@ footer a{color:#fff;text-decoration:underline}
 
 <!-- CONTACTO -->
 <section id="contacto" class="contacto">
-  <div class="logo-wrap">
-    <img src="WhatsApp Image 2025-11-07 at 11.58.43 (1).jpeg" class="logo-img" />
-    <h2>Contáctanos</h2>
-  </div>
+  <h2>Contáctanos</h2>
   <div class="grid3">
-    <div>
-      <strong>Kenneth Carmona</strong>
-      <p>📞 +52 56 3737 1011</p>
-      <p>📧 k.carmona001@ebc.edu.mx</p>
-    </div>
-    <div>
-      <strong>Iker García</strong>
-      <p>📞 +52 56 2202 9455</p>
-      <p>📧 is.garcia005@ebc.edu.mx</p>
-    </div>
-    <div>
-      <strong>David Montoya</strong>
-      <p>📞 +52 55 6802 7469</p>
-      <p>📧 d.montoya004@ebc.edu.mx</p>
-    </div>
+    <div><strong>Kenneth Carmona</strong><p>📞 +52 56 3737 1011</p><p>📧 k.carmona001@ebc.edu.mx</p></div>
+    <div><strong>Iker García</strong><p>📞 +52 56 2202 9455</p><p>📧 is.garcia005@ebc.edu.mx</p></div>
+    <div><strong>David Montoya</strong><p>📞 +52 55 6802 7469</p><p>📧 d.montoya004@ebc.edu.mx</p></div>
   </div>
-  <small>Aprender sin agotarse. El futuro de la educación está aquí.</small>
 </section>
 
 <!-- QR -->
 <section class="section" id="qr">
   <h2>Escanea y juega con NextSkill</h2>
-  <p>Abre esta página desde tu celular escaneando el código QR o compártelo con tus compañeros.</p>
-  <img id="qrImg" alt="QR NextSkill" style="width:230px;height:230px;border-radius:14px;border:1px solid #e5e9f2;box-shadow:0 8px 24px rgba(13,110,253,.12)">
+  <p>Escanea el código para abrir la plataforma en tu celular.</p>
+
+  <div id="qr-container" 
+       style="width:230px;height:230px;margin:0 auto;border-radius:14px;
+              border:1px solid #e5e9f2;box-shadow:0 8px 24px rgba(13,110,253,.12);">
+  </div>
+
   <p style="margin-top:12px">
     <a id="qrLink" href="#" target="_blank" style="color:#2563eb;font-weight:600"></a>
   </p>
@@ -264,6 +233,7 @@ footer a{color:#fff;text-decoration:underline}
 </div>
 
 <script>
+/* CHAT NEO */
 const panel=document.getElementById('neo-panel');
 const launch=document.getElementById('neo-launch');
 const msgs=document.getElementById('neo-msgs');
@@ -280,9 +250,9 @@ function addMsg(from,text){
 function responder(text){
   const t=text.toLowerCase();
   if(t.includes('balance')) addMsg('neo','💼 Puedes practicar balance general aquí 👉 balance.html');
-  else if(t.includes('diario')) addMsg('neo','📘 Te recomiendo abrir el Libro Diario PRO 👉 diario.html');
-  else if(t.includes('finanzas')) addMsg('neo','📊 El simulador financiero está disponible 👉 game.html');
-  else addMsg('neo','🤔 Puedo ayudarte con balance, diario o finanzas. ¿Cuál eliges?');
+  else if(t.includes('diario')) addMsg('neo','📘 Libro Diario PRO está aquí 👉 diario.html');
+  else if(t.includes('finanzas')) addMsg('neo','📊 Simulador financiero disponible 👉 game.html');
+  else addMsg('neo','🤖 Puedo ayudarte con balance, diario o finanzas. ¿Qué necesitas?');
 }
 send.onclick=()=>{
   const val=input.value.trim();
@@ -293,17 +263,23 @@ send.onclick=()=>{
 }
 launch.onclick=()=>{panel.style.display=panel.style.display==='block'?'none':'block';};
 
-/* QR AUTO */
+/* QR ESTABLE OFFLINE */
 const PAGES_URL="https://davidmontoya2006c-cyber.github.io/NextSkill/";
-const QR_API="https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=";
-const qrImg=document.getElementById("qrImg");
-const qrLink=document.getElementById("qrLink");
-qrImg.src=QR_API+encodeURIComponent(PAGES_URL);
-qrLink.href=PAGES_URL;
-qrLink.textContent=PAGES_URL;
+new QRCode(document.getElementById("qr-container"), {
+    text: PAGES_URL,
+    width: 230,
+    height: 230,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+});
+document.getElementById("qrLink").href=PAGES_URL;
+document.getElementById("qrLink").textContent=PAGES_URL;
 </script>
+
 </body>
 </html>
+
 
 
 
